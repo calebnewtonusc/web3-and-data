@@ -1,10 +1,13 @@
 {
-  "name": "protocol-forge-tracker",
-  "version": "1.0.0",
+  "name": "the-journey-tracker",
+  "version": "1.1.0",
   "private": true,
-  "description": "45-workday tracker to become a deep smart contract engineer",
+  "description": "Progress tracker + persistence API for the smart-contract → Tesla data-engineering journey",
   "scripts": {
     "start": "node server.js"
+  },
+  "dependencies": {
+    "pg": "^8.13.1"
   },
   "engines": {
     "node": ">=18"

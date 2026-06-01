@@ -1,7 +1,7 @@
 // Service worker for The Journey tracker.
 // Cache-first for the small static asset set, with a network fallback that
 // refreshes the cache so deploys propagate on the next load.
-const CACHE = "journey-v3";
+const CACHE = "journey-v4";
 const ASSETS = [
   "./",
   "./index.html",
@@ -31,6 +31,8 @@ self.addEventListener("activate", (event) => {
 
 self.addEventListener("fetch", (event) => {
   const req = event.request;
+  // Never cache the persistence API — always go to the network.
+  if (new URL(req.url).pathname.startsWith("/api/")) return;
   if (req.method !== "GET") return;
   // Network-first for navigations so new HTML wins; fall back to cache offline.
   if (req.mode === "navigate") {
