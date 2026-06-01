@@ -4,7 +4,7 @@ A single, continuous progress tracker for one build: **become a deep smart contr
 
 The journey runs in two phases, flowing as one track:
 
-**Phase 1 — Protocol Forge:** the plan to become a deep smart contract engineer (June through early August 2026). Ten weeks, 50 workdays, every day broken into Learn / Do / Artifact, Friday quality gates, and a final evidence scorecard. Week 10 is a production-patterns capstone: upgradeable proxies, ERC-4337 account abstraction, bridges, DAO governance, MEV, weird ERC-20s, named tooling (Slither/Aderyn/Echidna/Medusa), and a Safe-owned testnet deploy.
+**Phase 1 — Protocol Forge:** the plan to become a deep smart contract engineer (June through mid-August 2026). Eleven weeks, 55 workdays, every day broken into Learn / Do / Artifact, Friday quality gates, and a final evidence scorecard. Week 10 is a production-patterns capstone (upgradeable proxies, ERC-4337 account abstraction, bridges, DAO governance, MEV, weird ERC-20s, named tooling: Slither/Aderyn/Echidna/Medusa, Safe-owned testnet deploy). Week 11 makes it hireable: a full-stack dApp (Next.js + wagmi/viem + RainbowKit), a live wallet-connected product, dApp infra (RPC, The Graph, IPFS), a Web3 portfolio site, and the monetize channels (audit contests, bug bounties, freelance, job boards).
 
 **Phase 2 — Tesla Data Engineer:** the FleetPulse portfolio + 12-week interview learning plan targeting a Tesla Data Engineer internship (Fall 2026). A 12-week interview track (each week with an exit criterion), seven FleetPulse portfolio levels, an SQL/DataLemur track, a Python/fundamentals/system-design track, and a final application package scorecard.
 

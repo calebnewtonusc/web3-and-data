@@ -26,6 +26,9 @@ window.PLAN = {
     "Upgradeable proxy + ERC-4337 account + bridge implemented and attacked",
     "Slither, Aderyn and Echidna/Medusa run with triaged findings",
     "One protocol deployed and verified on a public testnet, owned by a Safe multisig",
+    "A live, wallet-connected full-stack dApp anyone can use",
+    "A Web3 developer portfolio site marketing the work",
+    "Entered one audit contest (Code4rena/Sherlock/CodeHawks) or bug bounty",
   ],
 
   weeks: [
@@ -1220,6 +1223,122 @@ window.PLAN = {
             "Tooling reports (Slither, Aderyn, Echidna/Medusa)",
             "Verified testnet deployment",
             "Safe-owned contract + updated SECURITY.md / GAS_OPTIMIZATION.md",
+          ],
+        },
+      ],
+    },
+    {
+      n: 11,
+      title: "Full-Stack dApp & Going Pro",
+      range: "Aug 10–14",
+      summary:
+        "The deep protocol work is done. This week makes it hireable and monetizable: wire a usable frontend onto your contracts, ship a live dApp anyone can click, then open the income doors — portfolio site, audit contests, bug bounties, freelance, and job boards. The skills follow → do → monetize loop.",
+      gate: "You have a live, wallet-connected dApp anyone can use, a Web3 portfolio site that markets you, and you have entered at least one audit contest or applied to five roles.",
+      days: [
+        {
+          date: "Mon, Aug 10",
+          title: "Frontend dApp Foundations",
+          learn: [
+            "JavaScript/TypeScript for the client layer",
+            "Next.js + React for dApp UIs",
+            "wagmi + viem (the modern Ethereum client stack)",
+            "RainbowKit / ConnectKit wallet connection",
+            "Reading contract state, sending transactions, chain switching, tx status",
+          ],
+          do: [
+            "Scaffold a Next.js + wagmi + viem + RainbowKit app",
+            "Connect MetaMask and read a value from one of your contracts",
+            "Send a write transaction and surface pending/success/error states",
+            "Handle wrong-network and disconnected states",
+          ],
+          artifact: [
+            "apps/web/ dApp scaffold",
+            "Wallet connect + one read + one write working against a testnet",
+            "Notes on viem vs ethers.js tradeoffs",
+          ],
+        },
+        {
+          date: "Tue, Aug 11",
+          title: "Flagship dApp — A Usable Product",
+          learn: [
+            "Translating a protocol into a product UX",
+            "Token approvals and allowance flows",
+            "Live balances, slippage display, and optimistic UI",
+            "Empty/loading/error states for on-chain data",
+          ],
+          do: [
+            "Wire a real UI onto your AMM or lending market on a testnet",
+            "Support connect wallet, deposit, swap or borrow, and live balances",
+            "Add approval handling and human-readable error messages",
+            "Deploy the frontend (Vercel) pointed at the verified testnet contracts",
+          ],
+          artifact: [
+            "A live, wallet-connected dApp anyone can use",
+            "Public dApp URL + demo video",
+            "Screenshots for the portfolio",
+          ],
+        },
+        {
+          date: "Wed, Aug 12",
+          title: "dApp Infrastructure & an NFT Mint",
+          learn: [
+            "RPC providers: Alchemy / Infura",
+            "The Graph: subgraphs for indexing contract events",
+            "IPFS / Pinata for token + NFT metadata",
+            "Etherscan verification and reading a live contract",
+          ],
+          do: [
+            "Move the dApp onto an Alchemy/Infura RPC with a key",
+            "Build a minimal subgraph indexing your protocol's events and query it from the UI",
+            "Build a small ERC-721 NFT mint dApp with IPFS metadata",
+            "Verify all deployed contracts on the block explorer",
+          ],
+          artifact: [
+            "Subgraph indexing live events",
+            "NFT mint dApp with IPFS metadata",
+            "All contracts verified on Etherscan",
+          ],
+        },
+        {
+          date: "Thu, Aug 13",
+          title: "Monetize — Portfolio, Contests, Freelance",
+          learn: [
+            "A Web3 developer portfolio site that markets you",
+            "Audit contests: Code4rena, Sherlock, CodeHawks",
+            "Bug bounties: Immunefi",
+            "Freelance (Upwork) and crypto job boards (CryptoJobsList, web3.career, LinkedIn)",
+          ],
+          do: [
+            "Build a portfolio site: live dApp, contracts, audit reports, GitHub, resume, contact",
+            "Write tight resume bullets from the monorepo and the live dApp",
+            "Register for Code4rena / Sherlock / CodeHawks and read one past contest report",
+            "Create profiles on Immunefi, CryptoJobsList, web3.career; optimize LinkedIn for blockchain",
+          ],
+          artifact: [
+            "Live Web3 portfolio site",
+            "Resume bullets + LinkedIn updated",
+            "Accounts created on at least two contest/bounty/job platforms",
+          ],
+        },
+        {
+          date: "Fri, Aug 14",
+          title: "From Scratch, Then Apply",
+          learn: [
+            "Unguided build: your own idea, no tutorial",
+            "Scoping a small but complete dApp",
+            "Optional: a simple bot (arbitrage / trading / sniping) as an income avenue",
+            "Turning projects into applications and first opportunities",
+          ],
+          do: [
+            "Design and build one small dApp entirely solo, no guide, and deploy it",
+            "Optional: build a basic bot against a testnet (e.g., arbitrage watcher)",
+            "Enter one live audit contest OR apply to five roles / send five freelance proposals",
+            "Add everything to the portfolio site",
+          ],
+          artifact: [
+            "One from-scratch dApp deployed and in the portfolio",
+            "First audit-contest entry or five applications/proposals sent",
+            "A standing pipeline: contests + bounties + applications in flight",
           ],
         },
       ],
