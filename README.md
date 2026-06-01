@@ -1,10 +1,12 @@
-# Protocol Forge Tracker
+# Journey Tracker
 
-A progress tracker for the **45-workday plan to become a deep smart contract engineer** (Mon June 1, 2026 through Fri July 31, 2026). Nine weeks, 45 workdays, every day broken into Learn / Do / Artifact with checkboxes, Friday quality gates, and the final evidence scorecard.
+A two-track progress tracker, switchable from one Apple-styled page. Progress is stored per track in the browser via `localStorage`, so each journey persists independently across visits on the same device.
+
+**Track 1 — Protocol Forge:** the 45-workday plan to become a deep smart contract engineer (Mon June 1 through Fri July 31, 2026). Nine weeks, 45 workdays, every day broken into Learn / Do / Artifact with checkboxes, Friday quality gates, and a final evidence scorecard.
+
+**Track 2 — Tesla Data Engineer:** the FleetPulse portfolio + 12-week interview learning plan targeting a Tesla Data Engineer internship (Fall 2026). A 12-week interview track (each week with an exit criterion), seven FleetPulse portfolio levels, an SQL/DataLemur track, and a Python/fundamentals/system-design track, plus the final application package scorecard.
 
 Built to the Apple `DESIGN.md` system: Action Blue (#0066cc) as the single accent, SF Pro / Inter typography with negative letter-spacing, alternating light and dark edge-to-edge tiles, pill chrome, hairline borders, no decorative shadows.
-
-Progress is stored in the browser via `localStorage`, so it persists across visits on the same device.
 
 ## Run locally
 
@@ -37,12 +39,17 @@ railway domain
 
 ## Files
 
-| File           | Purpose                                        |
-| -------------- | ---------------------------------------------- |
-| `index.html`   | The full tracker UI (Apple design system)      |
-| `data.js`      | All 45 workdays of the plan, encoded as data   |
-| `server.js`    | Zero-dependency static file server for Railway |
-| `package.json` | `npm start` runs the server; pins Node >= 18   |
-| `railway.json` | Railway build and deploy configuration         |
+| File            | Purpose                                           |
+| --------------- | ------------------------------------------------- |
+| `index.html`    | Multi-track tracker UI (Apple design system)      |
+| `data.js`       | Protocol Forge plan — all 45 workdays             |
+| `data-tesla.js` | Tesla Data Engineer plan — FleetPulse + interview |
+| `server.js`     | Zero-dependency static file server for Railway    |
+| `package.json`  | `npm start` runs the server; pins Node >= 18      |
+| `railway.json`  | Railway build and deploy configuration            |
+
+## Adding a third track
+
+Each track is a plain data object in the unified shape (`id`, `title`, `subtitle`, `range`, `mission`, `groups[]`, `scorecard`). Drop in a new `data-*.js` file exposing a global, add it to the `TRACKS` array in `index.html`, and the switcher, stats, and rendering pick it up automatically. Protocol Forge is converted to that shape at runtime by `adaptProtocolForge`, so its source `data.js` stays untouched.
 
 All glory to God! ✝️❤️

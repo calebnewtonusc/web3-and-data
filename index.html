@@ -3,10 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Protocol Forge — 45-Workday Tracker</title>
+    <title>Journey Tracker — Protocol Forge & Tesla Data Engineer</title>
     <meta
       name="description"
-      content="A 45-workday plan to become a deep smart contract engineer. Track the math, the Solidity, the exploits, the audits."
+      content="Two-track journey tracker: Protocol Forge (deep smart contract engineer) and Tesla Data Engineer (FleetPulse portfolio + interview prep)."
     />
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -51,9 +51,6 @@
         background: #ffffff;
         color: #1d1d1f;
       }
-      /* Apple-tight display tracking is applied per-element via Tailwind */
-
-      /* Reading progress bar — Action Blue, pure CSS scroll-timeline with JS fallback */
       #progress-bar {
         position: fixed;
         top: 0;
@@ -64,8 +61,6 @@
         z-index: 60;
         transition: width 0.1s linear;
       }
-
-      /* Scroll reveal */
       .reveal {
         opacity: 0;
         transform: translateY(24px);
@@ -77,15 +72,12 @@
         opacity: 1;
         transform: translateY(0);
       }
-
-      /* Active/press micro-interaction — the system-wide Apple cue */
-      .press:active {
-        transform: scale(0.95);
-      }
       .press {
         transition: transform 0.15s ease;
       }
-
+      .press:active {
+        transform: scale(0.95);
+      }
       details > summary {
         list-style: none;
       }
@@ -98,15 +90,12 @@
       .chev {
         transition: transform 0.2s ease;
       }
-
       .ring-progress {
         transition: stroke-dashoffset 0.6s cubic-bezier(0.22, 1, 0.36, 1);
       }
-
       ::selection {
         background: rgba(0, 102, 204, 0.18);
       }
-
       @media (prefers-reduced-motion: reduce) {
         .reveal {
           opacity: 1;
@@ -122,19 +111,19 @@
   <body class="font-sans">
     <div id="progress-bar"></div>
 
-    <!-- Global nav: persistent thin black bar (Apple global-nav) -->
+    <!-- Global nav: persistent thin black bar -->
     <nav class="fixed top-0 inset-x-0 z-50 bg-black text-white" style="height: 44px">
       <div class="max-w-[1440px] mx-auto h-full px-6 flex items-center justify-between">
         <a href="#top" class="flex items-center gap-2 press">
           <i data-lucide="hexagon" class="w-[15px] h-[15px] text-white"></i>
-          <span class="text-[12px] font-normal tracking-[-0.12px]">Protocol Forge</span>
+          <span class="text-[12px] font-normal tracking-[-0.12px]" id="navTitle">Journey</span>
         </a>
         <div class="hidden md:flex items-center gap-[18px]" id="navWeeks"></div>
         <span id="navPct" class="text-[12px] tracking-[-0.12px] text-white/70 tabular-nums">0%</span>
       </div>
     </nav>
 
-    <!-- Sub-nav: frosted parchment strip (Apple sub-nav-frosted) -->
+    <!-- Sub-nav: frosted parchment strip -->
     <div
       class="fixed top-[44px] inset-x-0 z-40 border-b border-hairline"
       style="
@@ -145,15 +134,13 @@
       "
     >
       <div class="max-w-[1440px] mx-auto h-full px-6 flex items-center justify-between">
-        <span class="text-[21px] font-semibold tracking-[0.231px] text-ink">45-Workday Plan</span>
+        <span class="text-[21px] font-semibold tracking-[0.231px] text-ink" id="subTitle">Journey Tracker</span>
         <div class="flex items-center gap-4">
-          <span class="hidden sm:inline text-[14px] tracking-[-0.224px] text-inkmuted tabular-nums">
-            <span id="subDays">0</span>/45 days · <span id="subGates">0</span>/9 gates
-          </span>
+          <span class="hidden sm:inline text-[14px] tracking-[-0.224px] text-inkmuted tabular-nums" id="subStats"></span>
           <button
             id="resetBtn"
             class="press text-[14px] tracking-[-0.224px] text-action hover:text-actionfocus"
-            aria-label="Reset all progress"
+            aria-label="Reset progress for this track"
           >
             Reset
           </button>
@@ -161,50 +148,35 @@
       </div>
     </div>
 
-    <!-- Spacer for fixed bars -->
     <div style="height: 96px" id="top"></div>
 
-    <!-- Hero tile (parchment, light) -->
+    <!-- Hero -->
     <header class="bg-parchment">
-      <div class="max-w-[1440px] mx-auto px-6 py-20 md:py-[80px]">
-        <div class="max-w-[860px] reveal">
+      <div class="max-w-[1440px] mx-auto px-6 py-16 md:py-[72px]">
+        <!-- Track switcher (segmented control) -->
+        <div class="reveal inline-flex items-center gap-1 rounded-full border border-hairline bg-white p-1 mb-8" id="trackSwitch" role="tablist"></div>
+
+        <div class="max-w-[860px]">
           <span
-            class="inline-flex items-center gap-2 rounded-full border border-hairline bg-white px-4 py-1.5 text-[14px] tracking-[-0.224px] text-inkmuted80"
+            class="reveal inline-flex items-center gap-2 rounded-full border border-hairline bg-white px-4 py-1.5 text-[14px] tracking-[-0.224px] text-inkmuted80"
           >
             <i data-lucide="calendar-days" class="w-4 h-4 text-action"></i>
-            <span id="rangeLabel">Mon June 1, 2026 — Fri July 31, 2026</span>
+            <span id="rangeLabel"></span>
           </span>
           <h1
-            class="mt-6 text-[40px] md:text-[56px] font-semibold leading-[1.07] tracking-[-0.28px] text-ink"
-          >
-            Protocol Forge
-          </h1>
-          <p class="mt-4 text-[21px] md:text-[28px] font-normal leading-[1.14] tracking-[0.196px] text-inkmuted80">
-            45 workdays to become a deep smart contract engineer. Derive the
-            math, build it in Solidity, attack it, optimize it, audit it.
-          </p>
+            id="heroTitle"
+            class="reveal mt-6 text-[40px] md:text-[56px] font-semibold leading-[1.07] tracking-[-0.28px] text-ink"
+          ></h1>
+          <p id="heroSubtitle" class="reveal mt-4 text-[21px] md:text-[28px] font-normal leading-[1.14] tracking-[0.196px] text-inkmuted80"></p>
         </div>
 
-        <!-- Progress dashboard: white utility cards, hairline border, rounded-18, no shadow -->
+        <!-- Stat cards -->
         <div class="mt-12 grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <!-- Overall ring -->
           <div class="reveal bg-white border border-hairline rounded-applelg p-6 flex items-center gap-6">
             <div class="relative shrink-0">
               <svg width="112" height="112" viewBox="0 0 112 112" class="-rotate-90">
                 <circle cx="56" cy="56" r="48" fill="none" stroke="#e6e6e6" stroke-width="8" />
-                <circle
-                  id="ringMain"
-                  cx="56"
-                  cy="56"
-                  r="48"
-                  fill="none"
-                  stroke="#0066cc"
-                  stroke-width="8"
-                  stroke-linecap="round"
-                  class="ring-progress"
-                  stroke-dasharray="301.6"
-                  stroke-dashoffset="301.6"
-                />
+                <circle id="ringMain" cx="56" cy="56" r="48" fill="none" stroke="#0066cc" stroke-width="8" stroke-linecap="round" class="ring-progress" stroke-dasharray="301.6" stroke-dashoffset="301.6" />
               </svg>
               <div class="absolute inset-0 flex items-center justify-center">
                 <span id="ringPct" class="text-[28px] font-semibold tracking-[-0.5px] text-ink tabular-nums">0%</span>
@@ -219,280 +191,385 @@
             </div>
           </div>
 
-          <!-- Workdays -->
           <div class="reveal bg-white border border-hairline rounded-applelg p-6 flex flex-col justify-center">
             <div class="flex items-center gap-2 text-inkmuted mb-2">
               <i data-lucide="check-circle-2" class="w-4 h-4"></i>
-              <span class="text-[14px] tracking-[-0.224px]">Workdays complete</span>
+              <span class="text-[14px] tracking-[-0.224px]" id="unitLabel">Modules complete</span>
             </div>
             <div class="text-[40px] font-semibold leading-none tracking-[-0.5px] text-ink tabular-nums">
-              <span id="daysDone" class="text-action">0</span>
-              <span class="text-hairline text-[28px]">/ 45</span>
+              <span id="itemsDone" class="text-action">0</span>
+              <span class="text-hairline text-[28px]">/ <span id="itemsTotal">0</span></span>
             </div>
             <div class="mt-4 h-1.5 bg-dividersoft rounded-full overflow-hidden">
-              <div id="daysBar" class="h-full bg-action rounded-full transition-all duration-500" style="width: 0%"></div>
+              <div id="itemsBar" class="h-full bg-action rounded-full transition-all duration-500" style="width: 0%"></div>
             </div>
           </div>
 
-          <!-- Gates -->
           <div class="reveal bg-white border border-hairline rounded-applelg p-6 flex flex-col justify-center">
             <div class="flex items-center gap-2 text-inkmuted mb-2">
               <i data-lucide="flag" class="w-4 h-4"></i>
-              <span class="text-[14px] tracking-[-0.224px]">Quality gates passed</span>
+              <span class="text-[14px] tracking-[-0.224px]" id="mileLabel">Milestones passed</span>
             </div>
             <div class="text-[40px] font-semibold leading-none tracking-[-0.5px] text-ink tabular-nums">
-              <span id="gatesDone" class="text-action">0</span>
-              <span class="text-hairline text-[28px]">/ 9</span>
+              <span id="milesDone" class="text-action">0</span>
+              <span class="text-hairline text-[28px]">/ <span id="milesTotal">0</span></span>
             </div>
-            <div class="mt-4 flex gap-1.5" id="gateDots"></div>
+            <div class="mt-4 flex flex-wrap gap-1.5" id="mileDots"></div>
           </div>
         </div>
       </div>
     </header>
 
-    <!-- Mission tile (dark, for rhythm) -->
+    <!-- Mission tile (dark) -->
     <section class="bg-tile text-white">
-      <div class="max-w-[1440px] mx-auto px-6 py-16 md:py-[80px]">
-        <div class="reveal max-w-[860px]">
+      <div class="max-w-[1440px] mx-auto px-6 py-14 md:py-[72px]">
+        <div class="reveal max-w-[920px]">
           <div class="text-[14px] tracking-[-0.224px] text-white/50 uppercase">The Standard</div>
-          <p
-            id="missionText"
-            class="mt-3 text-[24px] md:text-[34px] font-semibold leading-[1.2] tracking-[-0.374px]"
-          ></p>
+          <p id="missionText" class="mt-3 text-[24px] md:text-[34px] font-semibold leading-[1.2] tracking-[-0.374px]"></p>
         </div>
       </div>
     </section>
 
-    <!-- Weeks -->
-    <main id="weeks"></main>
+    <!-- Groups render here -->
+    <main id="groups"></main>
 
-    <!-- Evidence standard (dark tile) -->
-    <section class="bg-tile3 text-white">
+    <!-- Scorecard (dark tile) -->
+    <section id="scorecardSection" class="bg-tile3 text-white">
       <div class="max-w-[1440px] mx-auto px-6 py-16 md:py-[80px]">
         <div class="reveal max-w-[860px] mb-10">
-          <div class="text-[14px] tracking-[-0.224px] text-white/50 uppercase">By July 31</div>
-          <h2 class="mt-3 text-[34px] md:text-[40px] font-semibold leading-[1.1] tracking-[-0.374px]">
-            Final Evidence Standard
-          </h2>
-          <p class="mt-4 text-[17px] leading-[1.47] tracking-[-0.374px] text-white/70">
-            What the GitHub should contain. Deliberately extreme. When breadth
-            conflicts with rigor, keep the math, testing and security work.
-          </p>
+          <div class="text-[14px] tracking-[-0.224px] text-white/50 uppercase" id="scoreEyebrow">Scorecard</div>
+          <h2 id="scoreTitle" class="mt-3 text-[34px] md:text-[40px] font-semibold leading-[1.1] tracking-[-0.374px]"></h2>
+          <p id="scoreSubtitle" class="mt-4 text-[17px] leading-[1.47] tracking-[-0.374px] text-white/70"></p>
         </div>
-        <div id="evidenceGrid" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+        <div id="scoreGrid" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
       </div>
     </section>
 
-    <!-- Footer (parchment) -->
     <footer class="bg-parchment">
       <div class="max-w-[1440px] mx-auto px-6 py-16">
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div class="flex items-center gap-2">
             <i data-lucide="hexagon" class="w-4 h-4 text-ink"></i>
-            <span class="text-[17px] font-semibold tracking-[-0.374px] text-ink">Protocol Forge</span>
+            <span class="text-[17px] font-semibold tracking-[-0.374px] text-ink">Journey Tracker</span>
           </div>
-          <span class="text-[12px] tracking-[-0.12px] text-inkmuted">
-            Progress is saved locally in your browser.
-          </span>
+          <span class="text-[12px] tracking-[-0.12px] text-inkmuted">Progress is saved locally in your browser, per track.</span>
         </div>
         <div class="mt-6 pt-6 border-t border-hairline text-[12px] tracking-[-0.12px] text-inkmuted">
-          Built for Caleb's journey into deep smart contract engineering.
+          Built for Caleb's two journeys: deep smart contract engineering and Tesla fleet data engineering.
         </div>
       </div>
     </footer>
 
     <script src="data.js"></script>
+    <script src="data-tesla.js"></script>
     <script>
-      const KEY = "protocol-forge-progress-v1";
+      const KEY = "journey-tracker-progress-v2";
+      const ACTIVE_KEY = "journey-tracker-active-v2";
       let state = JSON.parse(localStorage.getItem(KEY) || "{}");
       const save = () => localStorage.setItem(KEY, JSON.stringify(state));
 
-      const taskId = (w, d, sec, i) => `w${w}_d${d}_${sec}_${i}`;
-      const gateId = (w) => `gate_w${w}`;
-
-      const allTaskIds = [];
-      PLAN.weeks.forEach((wk) => {
-        wk.days.forEach((day, di) => {
-          ["learn", "do", "artifact"].forEach((sec) => {
-            day[sec].forEach((_, i) => allTaskIds.push(taskId(wk.n, di, sec, i)));
-          });
-        });
-      });
-
-      const SEC_META = {
-        learn: { label: "Learn", icon: "book-open" },
-        do: { label: "Do", icon: "hammer" },
-        artifact: { label: "Artifact", icon: "package-check" },
-      };
-
-      function dayComplete(wn, di) {
-        const day = PLAN.weeks.find((w) => w.n === wn).days[di];
-        return ["learn", "do", "artifact"].every((sec) =>
-          day[sec].every((_, i) => state[taskId(wn, di, sec, i)])
-        );
+      // ---- Adapter: convert the original Protocol Forge PLAN into the unified shape.
+      function adaptProtocolForge(P) {
+        return {
+          id: "protocol-forge",
+          title: P.title,
+          subtitle: P.subtitle,
+          range: P.range,
+          mission: P.mission,
+          unitLabel: "Workdays",
+          milestoneLabel: "Quality gates",
+          groups: P.weeks.map((wk) => ({
+            key: `w${wk.n}`,
+            tag: `Week ${wk.n}`,
+            range: wk.range,
+            title: wk.title,
+            summary: wk.summary,
+            gate: { label: "Friday Quality Gate", text: wk.gate },
+            items: wk.days.map((day, di) => ({
+              key: `d${di}`,
+              eyebrow: day.date,
+              title: day.title,
+              sections: [
+                { label: "Learn", tasks: day.learn },
+                { label: "Do", tasks: day.do },
+                { label: "Artifact", tasks: day.artifact },
+              ],
+            })),
+          })),
+          scorecard: {
+            title: "Final Evidence Standard",
+            subtitle:
+              "What the GitHub should contain by July 31. Deliberately extreme. When breadth conflicts with rigor, keep the math, testing and security work.",
+            items: P.evidence,
+          },
+        };
       }
 
-      document.getElementById("missionText").textContent = PLAN.mission;
-      document.getElementById("rangeLabel").textContent = PLAN.range;
-      document.getElementById("tasksTotal").textContent = allTaskIds.length;
+      const TRACKS = [adaptProtocolForge(window.PLAN), window.TESLA];
+      const SECTION_ICON = {
+        Learn: "book-open",
+        Do: "hammer",
+        Artifact: "package-check",
+        Features: "layers",
+        Metrics: "bar-chart-3",
+        "Required DAGs": "git-branch",
+        "Required CLI": "terminal",
+        "Required checks": "shield-check",
+        Concepts: "brain",
+        "Interview defense": "message-square",
+        Targets: "target",
+        Problems: "list-checks",
+        "Problems II": "list-checks",
+        Core: "database",
+        Joins: "database",
+        Aggregations: "sigma",
+        Windows: "panels-top-left",
+        "Time-series": "clock",
+        "Fleet analytics": "car",
+        Drills: "dumbbell",
+        "Python skills": "code",
+        "Must know": "book-marked",
+        "Data modeling": "table-2",
+        "Answer structure": "list-ordered",
+        "Follow-ups to practice": "help-circle",
+        "AI without exposure": "bot",
+      };
+      const iconFor = (label) => SECTION_ICON[label] || "check-square";
 
-      // nav week chips
-      const navWeeks = document.getElementById("navWeeks");
-      PLAN.weeks.forEach((wk) => {
-        const a = document.createElement("a");
-        a.href = `#week-${wk.n}`;
-        a.textContent = wk.n;
-        a.id = `navchip-${wk.n}`;
-        a.className =
-          "press w-6 h-6 flex items-center justify-center rounded-full text-[12px] text-white/60 hover:text-white transition-colors";
-        navWeeks.appendChild(a);
-      });
+      const TILE_CYCLE = ["bg-parchment", "bg-white", "bg-tile"];
 
-      // gate dots
-      const gateDots = document.getElementById("gateDots");
-      PLAN.weeks.forEach((wk) => {
-        const d = document.createElement("div");
-        d.id = `gatedot-${wk.n}`;
-        d.className = "flex-1 h-1.5 rounded-full bg-dividersoft transition-colors duration-300";
-        gateDots.appendChild(d);
-      });
+      // ---- stable id helpers (prefixed by plan id)
+      const tid = (pid, gk, ik, si, ti) => `${pid}:${gk}:${ik}:s${si}:t${ti}`;
+      const gateId = (pid, gk, ik) => (ik ? `${pid}:igate:${gk}:${ik}` : `${pid}:gate:${gk}`);
+      const scoreId = (pid, i) => `${pid}:score:${i}`;
 
-      // checkbox row (Action Blue accent only)
-      function checkboxRow(id, text) {
+      let plan = null; // active plan
+      let MILES = []; // {id} list of all milestones for active plan
+
+      function allItemTaskIds(p, g, it, iIdx) {
+        const ids = [];
+        it.sections.forEach((sec, si) => sec.tasks.forEach((_, ti) => ids.push(tid(p.id, g.key, it.key, si, ti))));
+        return ids;
+      }
+      function itemComplete(p, g, it) {
+        return allItemTaskIds(p, g, it).every((id) => state[id]);
+      }
+      function allTaskIdsFor(p) {
+        const ids = [];
+        p.groups.forEach((g) => g.items.forEach((it) => ids.push(...allItemTaskIds(p, g, it))));
+        return ids;
+      }
+
+      // ---- checkbox markup (Action Blue only)
+      function checkbox(id, text, dark) {
         const on = !!state[id];
         return `
-        <label class="grp flex items-start gap-3 py-1.5 cursor-pointer select-none">
+        <label class="flex items-start gap-3 py-1.5 cursor-pointer select-none">
           <span class="cbx mt-[2px] shrink-0 w-[20px] h-[20px] rounded-[6px] border flex items-center justify-center transition-all duration-150 ${
-            on ? "bg-action border-action" : "border-hairline"
+            on ? "bg-action border-action" : dark ? "border-white/30" : "border-hairline"
           }">
             <i data-lucide="check" class="w-3.5 h-3.5 text-white ${on ? "" : "opacity-0"}"></i>
           </span>
           <input type="checkbox" class="hidden task-cb" data-id="${id}" ${on ? "checked" : ""} />
           <span class="text-[15px] leading-[1.45] tracking-[-0.224px] ${
-            on ? "text-inkmuted line-through" : "text-inkmuted80"
+            on ? (dark ? "text-white/40 line-through" : "text-inkmuted line-through") : dark ? "text-white/85" : "text-inkmuted80"
           }">${text}</span>
         </label>`;
       }
 
-      const weeksEl = document.getElementById("weeks");
-      // Alternating tile rhythm: parchment, white, dark — a predictable pulse
-      const TILE_CYCLE = ["bg-parchment", "bg-white", "bg-tile"];
-
-      PLAN.weeks.forEach((wk, wi) => {
-        const tileClass = TILE_CYCLE[wi % 3];
-        const dark = tileClass === "bg-tile";
-
-        const section = document.createElement("section");
-        section.id = `week-${wk.n}`;
-        section.className = `${tileClass} scroll-mt-[96px]`;
-
-        const daysHtml = wk.days
-          .map((day, di) => {
-            const secsHtml = ["learn", "do", "artifact"]
-              .map((sec) => {
-                const m = SEC_META[sec];
-                const rows = day[sec]
-                  .map((t, i) => checkboxRow(taskId(wk.n, di, sec, i), t))
-                  .join("");
-                return `
-                <div>
-                  <div class="flex items-center gap-2 mb-2">
-                    <i data-lucide="${m.icon}" class="w-4 h-4 text-action"></i>
-                    <span class="text-[12px] font-semibold uppercase tracking-[0.04em] text-inkmuted">${m.label}</span>
-                  </div>
-                  <div>${rows}</div>
-                </div>`;
-              })
-              .join("");
-
-            // Day cards are always white utility cards (constant legibility),
-            // hairline border, 18px radius, no shadow — Apple store-utility-card.
-            return `
-            <details class="grp bg-white border border-hairline rounded-applelg overflow-hidden" data-day="${wk.n}-${di}">
-              <summary class="press flex items-center gap-3 p-5 cursor-pointer">
-                <i data-lucide="chevron-right" class="chev w-5 h-5 text-inkmuted shrink-0"></i>
-                <span class="day-dot shrink-0 w-6 h-6 rounded-full border flex items-center justify-center border-hairline" data-daydot="${wk.n}-${di}">
-                  <i data-lucide="check" class="w-3.5 h-3.5 text-action opacity-0"></i>
-                </span>
-                <div class="flex-1 min-w-0">
-                  <div class="text-[12px] tracking-[-0.12px] text-inkmuted tabular-nums">${day.date}</div>
-                  <div class="text-[17px] font-semibold tracking-[-0.374px] text-ink truncate">${day.title}</div>
-                </div>
-                <span class="text-[12px] tracking-[-0.12px] text-inkmuted tabular-nums shrink-0" data-dayprog="${wk.n}-${di}"></span>
-              </summary>
-              <div class="px-5 pb-6 pt-1 grid grid-cols-1 md:grid-cols-3 gap-7 border-t border-dividersoft">
-                ${secsHtml}
-              </div>
-            </details>`;
-          })
-          .join("");
-
-        section.innerHTML = `
-          <div class="max-w-[1440px] mx-auto px-6 py-16 md:py-[80px]">
-            <div class="reveal flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8 max-w-[1100px]">
-              <div>
-                <div class="flex items-center gap-3">
-                  <span class="text-[14px] font-semibold tracking-[-0.224px] ${dark ? "text-sky" : "text-action"}">Week ${wk.n}</span>
-                  <span class="text-[14px] tracking-[-0.224px] ${dark ? "text-white/50" : "text-inkmuted"} tabular-nums">${wk.range}</span>
-                </div>
-                <h2 class="mt-2 text-[28px] md:text-[34px] font-semibold leading-[1.1] tracking-[-0.374px] ${dark ? "text-white" : "text-ink"}">${wk.title}</h2>
-                <p class="mt-3 text-[17px] leading-[1.47] tracking-[-0.374px] ${dark ? "text-white/70" : "text-inkmuted80"} max-w-[760px]">${wk.summary}</p>
-              </div>
-              <div class="shrink-0 text-right">
-                <div class="text-[12px] tracking-[-0.12px] ${dark ? "text-white/50" : "text-inkmuted"} uppercase">Week</div>
-                <div class="text-[34px] font-semibold tracking-[-0.5px] tabular-nums ${dark ? "text-white" : "text-ink"}" id="weekpct-${wk.n}">0%</div>
-              </div>
-            </div>
-            <div class="space-y-3">${daysHtml}</div>
-            <div class="reveal mt-4 rounded-applelg border ${dark ? "border-white/15 bg-white/5" : "border-hairline bg-white"} p-5">
-              <label class="flex items-start gap-3 cursor-pointer select-none">
-                <span class="cbx mt-[2px] shrink-0 w-[20px] h-[20px] rounded-[6px] border flex items-center justify-center transition-all duration-150 ${state[gateId(wk.n)] ? "bg-action border-action" : (dark ? "border-white/30" : "border-hairline")}" data-gatebox="${wk.n}">
-                  <i data-lucide="check" class="w-3.5 h-3.5 text-white ${state[gateId(wk.n)] ? "" : "opacity-0"}"></i>
-                </span>
-                <input type="checkbox" class="hidden gate-cb" data-id="${gateId(wk.n)}" ${state[gateId(wk.n)] ? "checked" : ""} />
-                <span>
-                  <span class="flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.04em] ${dark ? "text-sky" : "text-action"} mb-1">
-                    <i data-lucide="shield-check" class="w-4 h-4"></i> Friday Quality Gate
-                  </span>
-                  <span class="text-[15px] leading-[1.45] tracking-[-0.224px] ${dark ? "text-white/80" : "text-inkmuted80"}">${wk.gate}</span>
-                </span>
-              </label>
-            </div>
-          </div>`;
-        weeksEl.appendChild(section);
-      });
-
-      // Evidence grid (on dark tile3 → translucent white cards)
-      const evGrid = document.getElementById("evidenceGrid");
-      PLAN.evidence.forEach((e, i) => {
-        const id = `ev_${i}`;
+      function gateBlock(p, gk, ik, gate, dark) {
+        const id = gateId(p.id, gk, ik);
         const on = !!state[id];
-        const label = document.createElement("label");
-        label.className =
-          "evcard flex items-start gap-3 p-4 rounded-applemd border cursor-pointer select-none transition-colors duration-200 " +
-          (on ? "border-action bg-action/10" : "border-white/15 bg-white/5");
-        label.innerHTML = `
-          <span class="cbx mt-[2px] shrink-0 w-[20px] h-[20px] rounded-[6px] border flex items-center justify-center transition-all duration-150 ${on ? "bg-action border-action" : "border-white/30"}">
-            <i data-lucide="check" class="w-3.5 h-3.5 text-white ${on ? "" : "opacity-0"}"></i>
-          </span>
-          <input type="checkbox" class="hidden task-cb" data-id="${id}" ${on ? "checked" : ""} />
-          <span class="text-[15px] leading-[1.45] tracking-[-0.224px] ${on ? "text-white/60" : "text-white/90"}">${e}</span>`;
-        evGrid.appendChild(label);
-      });
+        return `
+          <div class="mt-4 rounded-applelg border ${dark ? "border-white/15 bg-white/5" : "border-hairline bg-white"} p-5">
+            <label class="flex items-start gap-3 cursor-pointer select-none">
+              <span class="cbx mt-[2px] shrink-0 w-[20px] h-[20px] rounded-[6px] border flex items-center justify-center transition-all duration-150 ${on ? "bg-action border-action" : dark ? "border-white/30" : "border-hairline"}" data-gate="${id}">
+                <i data-lucide="check" class="w-3.5 h-3.5 text-white ${on ? "" : "opacity-0"}"></i>
+              </span>
+              <input type="checkbox" class="hidden gate-cb" data-id="${id}" ${on ? "checked" : ""} />
+              <span>
+                <span class="flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.04em] ${dark ? "text-sky" : "text-action"} mb-1">
+                  <i data-lucide="shield-check" class="w-4 h-4"></i> ${gate.label}
+                </span>
+                <span class="text-[15px] leading-[1.45] tracking-[-0.224px] ${dark ? "text-white/80" : "text-inkmuted80"}">${gate.text}</span>
+              </span>
+            </label>
+          </div>`;
+      }
 
-      // ---- interactivity
-      document.addEventListener("change", (e) => {
-        const cb = e.target.closest(".task-cb, .gate-cb");
-        if (!cb) return;
-        if (cb.checked) state[cb.dataset.id] = true;
-        else delete state[cb.dataset.id];
-        save();
-        render();
-      });
+      // ---- render the active plan
+      function renderTrack(p) {
+        plan = p;
+        MILES = [];
 
-      function render() {
-        const done = allTaskIds.filter((id) => state[id]).length;
-        const total = allTaskIds.length;
+        document.getElementById("navTitle").textContent = p.title;
+        document.getElementById("subTitle").textContent = p.title;
+        document.getElementById("rangeLabel").textContent = p.range;
+        document.getElementById("heroTitle").textContent = p.title;
+        document.getElementById("heroSubtitle").textContent = p.subtitle;
+        document.getElementById("missionText").textContent = p.mission;
+        document.getElementById("unitLabel").textContent = (p.unitLabel || "Modules") + " complete";
+        document.getElementById("mileLabel").textContent = (p.milestoneLabel || "Milestones") + " passed";
+        document.getElementById("tasksTotal").textContent = allTaskIdsFor(p).length;
+
+        // track switcher
+        const sw = document.getElementById("trackSwitch");
+        sw.innerHTML = "";
+        TRACKS.forEach((t) => {
+          const active = t.id === p.id;
+          const b = document.createElement("button");
+          b.role = "tab";
+          b.className =
+            "press px-5 py-2 rounded-full text-[14px] font-semibold tracking-[-0.224px] transition-colors duration-200 " +
+            (active ? "bg-action text-white" : "text-ink hover:bg-parchment");
+          b.textContent = t.title;
+          b.addEventListener("click", () => {
+            if (t.id === plan.id) return;
+            localStorage.setItem(ACTIVE_KEY, t.id);
+            renderTrack(t);
+            window.scrollTo({ top: 0, behavior: "auto" });
+          });
+          sw.appendChild(b);
+        });
+
+        // nav chips (one per group)
+        const navWeeks = document.getElementById("navWeeks");
+        navWeeks.innerHTML = "";
+        p.groups.forEach((g, gi) => {
+          const a = document.createElement("a");
+          a.href = `#grp-${g.key}`;
+          a.textContent = gi + 1;
+          a.id = `navchip-${g.key}`;
+          a.className =
+            "press w-6 h-6 flex items-center justify-center rounded-full text-[12px] text-white/60 hover:text-white transition-colors";
+          navWeeks.appendChild(a);
+        });
+
+        // groups
+        const groupsEl = document.getElementById("groups");
+        groupsEl.innerHTML = "";
+        p.groups.forEach((g, gi) => {
+          const tileClass = TILE_CYCLE[gi % 3];
+          const dark = tileClass === "bg-tile";
+
+          if (g.gate) MILES.push(gateId(p.id, g.key, null));
+          g.items.forEach((it) => {
+            if (it.gate) MILES.push(gateId(p.id, g.key, it.key));
+          });
+
+          const section = document.createElement("section");
+          section.id = `grp-${g.key}`;
+          section.className = `${tileClass} scroll-mt-[96px]`;
+
+          const itemsHtml = g.items
+            .map((it) => {
+              const secsHtml = it.sections
+                .map((sec, si) => {
+                  const rows = sec.tasks.map((t, ti) => checkbox(tid(p.id, g.key, it.key, si, ti), t, false)).join("");
+                  return `
+                  <div>
+                    <div class="flex items-center gap-2 mb-2">
+                      <i data-lucide="${iconFor(sec.label)}" class="w-4 h-4 text-action"></i>
+                      <span class="text-[12px] font-semibold uppercase tracking-[0.04em] text-inkmuted">${sec.label}</span>
+                    </div>
+                    <div>${rows}</div>
+                  </div>`;
+                })
+                .join("");
+              const cols = it.sections.length >= 3 ? "md:grid-cols-3" : it.sections.length === 2 ? "md:grid-cols-2" : "md:grid-cols-1";
+              const summaryLine = it.summary
+                ? `<p class="text-[14px] leading-[1.45] tracking-[-0.224px] text-inkmuted mt-1 mb-3">${it.summary}</p>`
+                : "";
+              const itemGate = it.gate ? gateBlock(p, g.key, it.key, it.gate, false) : "";
+
+              return `
+              <details class="bg-white border border-hairline rounded-applelg overflow-hidden" data-item="${g.key}:${it.key}">
+                <summary class="press flex items-center gap-3 p-5 cursor-pointer">
+                  <i data-lucide="chevron-right" class="chev w-5 h-5 text-inkmuted shrink-0"></i>
+                  <span class="shrink-0 w-6 h-6 rounded-full border flex items-center justify-center border-hairline" data-itemdot="${g.key}:${it.key}">
+                    <i data-lucide="check" class="w-3.5 h-3.5 text-action opacity-0"></i>
+                  </span>
+                  <div class="flex-1 min-w-0">
+                    <div class="text-[12px] tracking-[-0.12px] text-inkmuted tabular-nums">${it.eyebrow}</div>
+                    <div class="text-[17px] font-semibold tracking-[-0.374px] text-ink truncate">${it.title}</div>
+                  </div>
+                  <span class="text-[12px] tracking-[-0.12px] text-inkmuted tabular-nums shrink-0" data-itemprog="${g.key}:${it.key}"></span>
+                </summary>
+                <div class="px-5 pb-6 pt-1 border-t border-dividersoft">
+                  ${summaryLine}
+                  <div class="grid grid-cols-1 ${cols} gap-7 ${summaryLine ? "" : "pt-1"}">${secsHtml}</div>
+                  ${itemGate}
+                </div>
+              </details>`;
+            })
+            .join("");
+
+          section.innerHTML = `
+            <div class="max-w-[1440px] mx-auto px-6 py-14 md:py-[72px]">
+              <div class="reveal flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8 max-w-[1100px]">
+                <div>
+                  <div class="flex items-center gap-3">
+                    <span class="text-[14px] font-semibold tracking-[-0.224px] ${dark ? "text-sky" : "text-action"}">${g.tag}</span>
+                    <span class="text-[14px] tracking-[-0.224px] ${dark ? "text-white/50" : "text-inkmuted"} tabular-nums">${g.range || ""}</span>
+                  </div>
+                  <h2 class="mt-2 text-[28px] md:text-[34px] font-semibold leading-[1.1] tracking-[-0.374px] ${dark ? "text-white" : "text-ink"}">${g.title}</h2>
+                  <p class="mt-3 text-[17px] leading-[1.47] tracking-[-0.374px] ${dark ? "text-white/70" : "text-inkmuted80"} max-w-[820px]">${g.summary || ""}</p>
+                </div>
+                <div class="shrink-0 text-right">
+                  <div class="text-[12px] tracking-[-0.12px] ${dark ? "text-white/50" : "text-inkmuted"} uppercase">Progress</div>
+                  <div class="text-[34px] font-semibold tracking-[-0.5px] tabular-nums ${dark ? "text-white" : "text-ink"}" id="grppct-${g.key}">0%</div>
+                </div>
+              </div>
+              <div class="space-y-3">${itemsHtml}</div>
+              ${g.gate ? gateBlock(p, g.key, null, g.gate, dark) : ""}
+            </div>`;
+          groupsEl.appendChild(section);
+        });
+
+        // scorecard
+        const sc = p.scorecard;
+        document.getElementById("scoreTitle").textContent = sc.title;
+        document.getElementById("scoreSubtitle").textContent = sc.subtitle;
+        const scoreGrid = document.getElementById("scoreGrid");
+        scoreGrid.innerHTML = "";
+        sc.items.forEach((e, i) => {
+          const id = scoreId(p.id, i);
+          const on = !!state[id];
+          const label = document.createElement("label");
+          label.className =
+            "flex items-start gap-3 p-4 rounded-applemd border cursor-pointer select-none transition-colors duration-200 " +
+            (on ? "border-action bg-action/10" : "border-white/15 bg-white/5");
+          label.innerHTML = `
+            <span class="cbx mt-[2px] shrink-0 w-[20px] h-[20px] rounded-[6px] border flex items-center justify-center transition-all duration-150 ${on ? "bg-action border-action" : "border-white/30"}">
+              <i data-lucide="check" class="w-3.5 h-3.5 text-white ${on ? "" : "opacity-0"}"></i>
+            </span>
+            <input type="checkbox" class="hidden task-cb" data-id="${id}" ${on ? "checked" : ""} />
+            <span class="text-[15px] leading-[1.45] tracking-[-0.224px] ${on ? "text-white/60" : "text-white/90"}">${e}</span>`;
+          scoreGrid.appendChild(label);
+        });
+
+        // milestone dots
+        const mileDots = document.getElementById("mileDots");
+        mileDots.innerHTML = "";
+        MILES.forEach((mid) => {
+          const d = document.createElement("div");
+          d.id = `miledot-${mid}`;
+          d.className = "h-1.5 flex-1 min-w-[10px] rounded-full bg-dividersoft transition-colors duration-300";
+          mileDots.appendChild(d);
+        });
+
+        // reveal observer (fresh nodes)
+        document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
+
+        lucide.createIcons();
+        recompute();
+      }
+
+      function recompute() {
+        const p = plan;
+        const ids = allTaskIdsFor(p);
+        const done = ids.filter((id) => state[id]).length;
+        const total = ids.length;
         const pct = total ? Math.round((done / total) * 100) : 0;
         document.getElementById("tasksDone").textContent = done;
         document.getElementById("ringPct").textContent = pct + "%";
@@ -500,107 +577,103 @@
         const C = 2 * Math.PI * 48;
         document.getElementById("ringMain").style.strokeDashoffset = C - (C * pct) / 100;
 
-        let daysDone = 0;
-        PLAN.weeks.forEach((wk) =>
-          wk.days.forEach((day, di) => {
-            const dc = dayComplete(wk.n, di);
-            if (dc) daysDone++;
-            const dot = document.querySelector(`[data-daydot="${wk.n}-${di}"]`);
+        // items
+        let itemsDone = 0;
+        let itemsTotal = 0;
+        p.groups.forEach((g) => {
+          let gDone = 0;
+          const gTaskIds = [];
+          g.items.forEach((it) => {
+            itemsTotal++;
+            const itIds = allItemTaskIds(p, g, it);
+            gTaskIds.push(...itIds);
+            const c = itIds.every((id) => state[id]);
+            if (c) itemsDone++;
+            const itDone = itIds.filter((id) => state[id]).length;
+            const dot = document.querySelector(`[data-itemdot="${g.key}:${it.key}"]`);
             if (dot) {
               const ic = dot.querySelector("i");
-              dot.classList.toggle("bg-action", dc);
-              dot.classList.toggle("border-action", dc);
-              dot.classList.toggle("border-hairline", !dc);
-              ic.classList.toggle("text-white", dc);
-              ic.classList.toggle("text-action", !dc);
-              ic.classList.toggle("opacity-0", !dc);
+              dot.classList.toggle("bg-action", c);
+              dot.classList.toggle("border-action", c);
+              dot.classList.toggle("border-hairline", !c);
+              ic.classList.toggle("text-white", c);
+              ic.classList.toggle("text-action", !c);
+              ic.classList.toggle("opacity-0", !c);
             }
-            const ids = ["learn", "do", "artifact"].flatMap((sec) =>
-              day[sec].map((_, i) => taskId(wk.n, di, sec, i))
-            );
-            const dDone = ids.filter((id) => state[id]).length;
-            const lbl = document.querySelector(`[data-dayprog="${wk.n}-${di}"]`);
-            if (lbl) lbl.textContent = `${dDone}/${ids.length}`;
-          })
-        );
-        document.getElementById("daysDone").textContent = daysDone;
-        document.getElementById("subDays").textContent = daysDone;
-        document.getElementById("daysBar").style.width = (daysDone / 45) * 100 + "%";
-
-        PLAN.weeks.forEach((wk) => {
-          const ids = [];
-          wk.days.forEach((day, di) =>
-            ["learn", "do", "artifact"].forEach((sec) =>
-              day[sec].forEach((_, i) => ids.push(taskId(wk.n, di, sec, i)))
-            )
-          );
-          const wd = ids.filter((id) => state[id]).length;
-          const wp = ids.length ? Math.round((wd / ids.length) * 100) : 0;
-          const el = document.getElementById(`weekpct-${wk.n}`);
-          if (el) el.textContent = wp + "%";
+            const lbl = document.querySelector(`[data-itemprog="${g.key}:${it.key}"]`);
+            if (lbl) lbl.textContent = `${itDone}/${itIds.length}`;
+          });
+          gDone = gTaskIds.filter((id) => state[id]).length;
+          const gp = gTaskIds.length ? Math.round((gDone / gTaskIds.length) * 100) : 0;
+          const gel = document.getElementById(`grppct-${g.key}`);
+          if (gel) gel.textContent = gp + "%";
+          const chip = document.getElementById(`navchip-${g.key}`);
+          if (chip) {
+            const full = gp === 100;
+            chip.classList.toggle("bg-action", full);
+            chip.classList.toggle("text-white", full);
+            chip.classList.toggle("text-white/60", !full);
+          }
         });
+        document.getElementById("itemsDone").textContent = itemsDone;
+        document.getElementById("itemsTotal").textContent = itemsTotal;
+        document.getElementById("itemsBar").style.width = (itemsTotal ? (itemsDone / itemsTotal) * 100 : 0) + "%";
 
-        let gatesDone = 0;
-        PLAN.weeks.forEach((wk) => {
-          const on = !!state[gateId(wk.n)];
-          if (on) gatesDone++;
-          const dot = document.getElementById(`gatedot-${wk.n}`);
+        // milestones
+        let milesDone = 0;
+        MILES.forEach((mid) => {
+          const on = !!state[mid];
+          if (on) milesDone++;
+          const dot = document.getElementById(`miledot-${mid}`);
           if (dot) {
             dot.classList.toggle("bg-action", on);
             dot.classList.toggle("bg-dividersoft", !on);
           }
-          const box = document.querySelector(`[data-gatebox="${wk.n}"]`);
-          if (box) {
-            const ic = box.querySelector("i");
-            box.classList.toggle("bg-action", on);
-            box.classList.toggle("border-action", on);
-            ic.classList.toggle("opacity-0", !on);
-          }
         });
-        document.getElementById("gatesDone").textContent = gatesDone;
-        document.getElementById("subGates").textContent = gatesDone;
+        document.getElementById("milesDone").textContent = milesDone;
+        document.getElementById("milesTotal").textContent = MILES.length;
 
-        // nav chip completed state
-        PLAN.weeks.forEach((wk) => {
-          const ids = [];
-          wk.days.forEach((day, di) =>
-            ["learn", "do", "artifact"].forEach((sec) =>
-              day[sec].forEach((_, i) => ids.push(taskId(wk.n, di, sec, i)))
-            )
-          );
-          const wp = ids.every((id) => state[id]);
-          const chip = document.getElementById(`navchip-${wk.n}`);
-          if (chip) {
-            chip.classList.toggle("bg-action", wp);
-            chip.classList.toggle("text-white", wp);
-            chip.classList.toggle("text-white/60", !wp);
-          }
+        // gate checkbox visuals
+        document.querySelectorAll("[data-gate]").forEach((box) => {
+          const on = !!state[box.dataset.gate];
+          const ic = box.querySelector("i");
+          box.classList.toggle("bg-action", on);
+          box.classList.toggle("border-action", on);
+          if (ic) ic.classList.toggle("opacity-0", !on);
         });
 
-        // evidence + checkbox visuals
-        document.querySelectorAll(".task-cb, .gate-cb").forEach((cb) => {
-          const on = !!state[cb.dataset.id];
-          const label = cb.closest("label");
-          const box = label.querySelector(".cbx");
-          if (box) {
-            const ic = box.querySelector("i");
-            if (ic) ic.classList.toggle("opacity-0", !on);
-          }
-        });
-
-        lucide.createIcons();
+        // sub-nav stats
+        document.getElementById("subStats").textContent =
+          `${itemsDone}/${itemsTotal} ${p.unitLabel || "modules"} · ${milesDone}/${MILES.length} ${p.milestoneLabel || "milestones"}`;
       }
 
-      // Reset
-      document.getElementById("resetBtn").addEventListener("click", () => {
-        if (confirm("Reset all progress? This clears every checkbox.")) {
-          state = {};
-          save();
-          location.reload();
-        }
+      // checkbox toggling
+      document.addEventListener("change", (e) => {
+        const cb = e.target.closest(".task-cb, .gate-cb");
+        if (!cb) return;
+        if (cb.checked) state[cb.dataset.id] = true;
+        else delete state[cb.dataset.id];
+        save();
+        // update this checkbox's own visual immediately
+        const label = cb.closest("label");
+        const box = label.querySelector(".cbx");
+        if (box) box.querySelector("i").classList.toggle("opacity-0", !cb.checked);
+        recompute();
       });
 
-      // Reading progress bar
+      // reset (active track only)
+      document.getElementById("resetBtn").addEventListener("click", () => {
+        if (!confirm(`Reset all progress for "${plan.title}"? This clears every checkbox in this track.`)) return;
+        const prefix = plan.id + ":";
+        Object.keys(state).forEach((k) => {
+          if (k.startsWith(prefix)) delete state[k];
+        });
+        save();
+        renderTrack(plan);
+        window.scrollTo({ top: 0, behavior: "auto" });
+      });
+
+      // reading progress bar
       const bar = document.getElementById("progress-bar");
       window.addEventListener(
         "scroll",
@@ -611,7 +684,7 @@
         { passive: true }
       );
 
-      // Scroll reveal
+      // reveal observer
       const io = new IntersectionObserver(
         (entries) => {
           entries.forEach((en) => {
@@ -621,12 +694,13 @@
             }
           });
         },
-        { threshold: 0.12 }
+        { threshold: 0.1 }
       );
-      document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
 
-      lucide.createIcons();
-      render();
+      // boot
+      const savedActive = localStorage.getItem(ACTIVE_KEY);
+      const initial = TRACKS.find((t) => t.id === savedActive) || TRACKS[0];
+      renderTrack(initial);
     </script>
   </body>
 </html>
