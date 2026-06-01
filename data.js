@@ -42,8 +42,10 @@ window.PLAN = {
       days: [
         {
           date: "Mon, June 1",
-          title: "EVM Mental Model & Foundry Setup",
+          title: "Blockchain Foundations, EVM Mental Model & Foundry",
           learn: [
+            "Blockchain fundamentals: blocks, hashing, proof-of-work vs proof-of-stake, consensus, finality",
+            "Where Ethereum sits: L1 vs L2/rollups, nodes, the mempool, how a transaction gets included",
             "Ethereum accounts, transactions, gas, calldata, storage and logs",
             "How Solidity functions compile into EVM execution",
             "msg.sender, msg.value, reverts, custom errors and events",
@@ -55,14 +57,15 @@ window.PLAN = {
             "Install Foundry and initialize the workspace",
             "Set up packages, test, notebooks, docs, audits folders",
             "Implement Counter.sol, SimpleBank.sol, MockERC20.sol",
+            "Implement a feature-complete ERC-20 (mint, burn, cap, EIP-2612 permit)",
             "Write tests for deposits, withdrawals, unauthorized actions, reverts",
             "Add GitHub Actions to run forge test on every push",
           ],
           artifact: [
             "Working repository",
             "Twenty basic Foundry tests",
-            "docs/EVM_EXECUTION_MODEL.md",
-            "2-min oral: why Solidity is not a normal backend API",
+            "docs/BLOCKCHAIN_FOUNDATIONS.md (consensus, finality, L1 vs L2) + docs/EVM_EXECUTION_MODEL.md",
+            "2-min oral: how Ethereum reaches consensus, and why Solidity is not a normal backend API",
           ],
         },
         {
@@ -259,26 +262,29 @@ window.PLAN = {
         },
         {
           date: "Fri, June 12",
-          title: "Secure Oracle Adapter, TWAP & Fork Testing",
+          title: "Secure Oracle Adapter, TWAP, Randomness & Fork Testing",
           learn: [
             "External price feeds and feed decimals",
             "Timestamp freshness, heartbeats, stale data",
             "TWAP vs instantaneous price",
+            "On-chain randomness: why block-variable RNG is exploitable, commit-reveal, Chainlink VRF",
             "Fork testing against deployed contract state",
           ],
           do: [
             "Implement OracleAdapter.sol, normalize decimals to WAD",
             "Reject stale prices",
             "Replace vulnerable spot-price borrowing calculation",
+            "Build a weak-RNG lottery, exploit it, then fix it with Chainlink VRF or commit-reveal",
             "Replay yesterday's attack against the secure version",
             "Write one fork test using a pinned feed + fixed block",
           ],
           artifact: [
             "Secured oracle integration",
             "Failed exploit against fixed design",
+            "Weak-RNG exploit + VRF/commit-reveal fix",
             "First fork test",
             "Completed audits/ORACLE_MANIPULATION_REPORT.md",
-            "5-min oral: spot price, TWAP, external oracle tradeoffs",
+            "5-min oral: spot price, TWAP, secure randomness, external oracle tradeoffs",
           ],
         },
       ],
