@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="The Journey">
+  <rect width="512" height="512" rx="112" fill="#1d1d1f" />
+  <path
+    d="M256 132 L350 186 L350 294 L256 348 L162 294 L162 186 Z"
+    fill="none"
+    stroke="#0066cc"
+    stroke-width="22"
+    stroke-linejoin="round"
+  />
+  <circle cx="256" cy="240" r="30" fill="#0066cc" />
+  <path d="M196 372 H316" stroke="#0066cc" stroke-width="22" stroke-linecap="round" />
+</svg>

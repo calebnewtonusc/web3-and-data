@@ -23,6 +23,9 @@ window.PLAN = {
     "One recorded architecture walkthrough",
     "One external protocol review or open-source contribution",
     "Ten targeted conversations with engineers, auditors or founders",
+    "Upgradeable proxy + ERC-4337 account + bridge implemented and attacked",
+    "Slither, Aderyn and Echidna/Medusa run with triaged findings",
+    "One protocol deployed and verified on a public testnet, owned by a Safe multisig",
   ],
 
   weeks: [
@@ -1099,6 +1102,124 @@ window.PLAN = {
             "Math-first body of work: vaults, AMMs, oracles, lending, stablecoins, perps, prediction markets",
             "Invariants, exploits, gas optimization, external code review",
             "Professional technical communication",
+          ],
+        },
+      ],
+    },
+    {
+      n: 10,
+      title: "Production Patterns & Capstone",
+      range: "Aug 3–7",
+      summary:
+        "Close the gaps the public curricula assume you know: upgradeable proxies, account abstraction, bridges, governance, MEV, weird ERC-20s, named tooling, and a real testnet deploy. This is what separates a math-strong builder from an engineer a DeFi team trusts on day one.",
+      gate: "You can build, attack, and fix a proxy, an ERC-4337 account, and a bridge; run Slither, Aderyn and Echidna/Medusa; and ship a Safe-owned, verified testnet deployment.",
+      days: [
+        {
+          date: "Mon, Aug 3",
+          title: "Upgradeable Proxies & delegatecall Storage",
+          learn: [
+            "Transparent, UUPS and Diamond proxy patterns",
+            "How delegatecall executes implementation code against proxy storage",
+            "Storage layout and storage collisions",
+            "Initializer vs constructor; the uninitialized-proxy risk",
+            "Upgrade authorization and centralization risk",
+          ],
+          do: [
+            "Implement a UUPS proxy + implementation with OpenZeppelin",
+            "Write a storage-collision exploit against a naive upgrade",
+            "Test a real upgrade preserving state",
+            "Add initializer guards and an upgrade-authorization check",
+          ],
+          artifact: [
+            "packages/upgradeable/ proxy module",
+            "Storage-collision exploit proof",
+            "audits/PROXY_UPGRADE_REPORT.md",
+          ],
+        },
+        {
+          date: "Tue, Aug 4",
+          title: "Account Abstraction (ERC-4337 + EIP-7702)",
+          learn: [
+            "EntryPoint, UserOperation, bundlers and paymasters",
+            "validateUserOp and the validation/execution split",
+            "Signature schemes and gas sponsorship",
+            "EIP-7702 vs ERC-4337 tradeoffs",
+            "Why account abstraction is the hottest 2026 surface",
+          ],
+          do: [
+            "Implement a minimal smart account (validateUserOp + execute)",
+            "Implement a paymaster that sponsors gas",
+            "Sign and send a UserOperation through a testnet bundler",
+            "Write tests for replay, nonce and signature failures",
+          ],
+          artifact: [
+            "packages/account-abstraction/ minimal ERC-4337 account + paymaster",
+            "Working UserOperation demo",
+            "Notes on the EntryPoint trust model",
+          ],
+        },
+        {
+          date: "Wed, Aug 5",
+          title: "Bridges, Cross-Chain & Signature Replay",
+          learn: [
+            "Lock-mint vs burn-mint bridge designs",
+            "Message verification and validator trust",
+            "Cross-chain signature replay",
+            "EIP-712 domain separation, chainId binding and nonces",
+            "Bridge hack post-mortems: Ronin, Wormhole, Nomad",
+          ],
+          do: [
+            "Implement a minimal lock/mint bridge with EIP-712 messages",
+            "Build a cross-chain signature-replay exploit",
+            "Fix it with chainId-bound domains and nonces",
+            "Add a fork test against a pinned chain state",
+          ],
+          artifact: [
+            "packages/bridge/ module",
+            "Cross-chain replay exploit proof",
+            "audits/BRIDGE_REPORT.md",
+          ],
+        },
+        {
+          date: "Thu, Aug 6",
+          title: "DAO Governance, MEV & Weird ERC-20s",
+          learn: [
+            "OpenZeppelin Governor + Timelock",
+            "Flash-loan voting attacks (Beanstalk)",
+            "MEV: frontrunning, sandwich attacks, slippage, private mempools",
+            "Weird ERC-20s: fee-on-transfer, rebasing, ERC-777 callbacks, missing return values",
+          ],
+          do: [
+            "Build a Governor + Timelock governance flow",
+            "Demonstrate a flash-loan governance attack and its mitigation",
+            "Add slippage protection to your AMM",
+            "Harden lending/AMM against fee-on-transfer and ERC-777 reentrancy",
+          ],
+          artifact: [
+            "packages/governance/ module",
+            "Governance-attack proof",
+            "audits/MEV_AND_WEIRD_ERC20_NOTES.md",
+          ],
+        },
+        {
+          date: "Fri, Aug 7",
+          title: "Named Tooling, Testnet Deploy & Safe",
+          learn: [
+            "Slither and Aderyn for static analysis",
+            "Echidna and Medusa for property-based fuzzing",
+            "Deploy + verify on a public testnet",
+            "Safe multisig ownership and monitoring/alerting",
+          ],
+          do: [
+            "Run Slither + Aderyn across the monorepo and triage findings",
+            "Write Echidna or Medusa property tests for one protocol",
+            "Deploy and verify one protocol on a public testnet",
+            "Transfer ownership to a Safe multisig",
+          ],
+          artifact: [
+            "Tooling reports (Slither, Aderyn, Echidna/Medusa)",
+            "Verified testnet deployment",
+            "Safe-owned contract + updated SECURITY.md / GAS_OPTIMIZATION.md",
           ],
         },
       ],

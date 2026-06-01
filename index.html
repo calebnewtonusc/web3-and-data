@@ -8,6 +8,10 @@
       name="description"
       content="One continuous build: become a deep smart contract engineer (Protocol Forge), then land and crush Tesla data engineering (FleetPulse)."
     />
+    <meta name="theme-color" content="#0066cc" />
+    <link rel="icon" href="icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="icon.svg" />
+    <link rel="manifest" href="manifest.webmanifest" />
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -96,6 +100,23 @@
       ::selection {
         background: rgba(0, 102, 204, 0.18);
       }
+      :focus-visible {
+        outline: 2px solid #0071e3;
+        outline-offset: 2px;
+        border-radius: 6px;
+      }
+      .flash-target {
+        animation: flash 1.4s ease-out;
+      }
+      @keyframes flash {
+        0%,
+        30% {
+          box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.5);
+        }
+        100% {
+          box-shadow: 0 0 0 0 rgba(0, 102, 204, 0);
+        }
+      }
       @media (prefers-reduced-motion: reduce) {
         .reveal {
           opacity: 1;
@@ -105,25 +126,33 @@
         html {
           scroll-behavior: auto;
         }
+        .flash-target {
+          animation: none;
+        }
       }
     </style>
   </head>
   <body class="font-sans">
+    <a
+      href="#groups"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[70] focus:px-4 focus:py-2 focus:bg-action focus:text-white focus:rounded-full focus:text-[14px] focus:font-semibold"
+      >Skip to content</a
+    >
     <div id="progress-bar"></div>
 
-    <!-- Global nav: persistent thin black bar -->
+    <!-- Global nav -->
     <nav class="fixed top-0 inset-x-0 z-50 bg-black text-white" style="height: 44px">
       <div class="max-w-[1440px] mx-auto h-full px-6 flex items-center justify-between">
         <a href="#top" class="flex items-center gap-2 press">
           <i data-lucide="hexagon" class="w-[15px] h-[15px] text-white"></i>
-          <span class="text-[12px] font-normal tracking-[-0.12px]" id="navTitle">The Journey</span>
+          <span class="text-[12px] font-normal tracking-[-0.12px]">The Journey</span>
         </a>
         <div class="hidden md:flex items-center gap-[14px]" id="navWeeks"></div>
         <span id="navPct" class="text-[12px] tracking-[-0.12px] text-white/70 tabular-nums">0%</span>
       </div>
     </nav>
 
-    <!-- Sub-nav: frosted parchment strip -->
+    <!-- Sub-nav -->
     <div
       class="fixed top-[44px] inset-x-0 z-40 border-b border-hairline"
       style="
@@ -134,17 +163,8 @@
       "
     >
       <div class="max-w-[1440px] mx-auto h-full px-6 flex items-center justify-between">
-        <span class="text-[21px] font-semibold tracking-[0.231px] text-ink" id="subTitle">The Journey</span>
-        <div class="flex items-center gap-4">
-          <span class="hidden sm:inline text-[14px] tracking-[-0.224px] text-inkmuted tabular-nums" id="subStats"></span>
-          <button
-            id="resetBtn"
-            class="press text-[14px] tracking-[-0.224px] text-action hover:text-actionfocus"
-            aria-label="Reset all progress"
-          >
-            Reset
-          </button>
-        </div>
+        <span class="text-[21px] font-semibold tracking-[0.231px] text-ink">The Journey</span>
+        <span class="hidden sm:inline text-[14px] tracking-[-0.224px] text-inkmuted tabular-nums" id="subStats"></span>
       </div>
     </div>
 
@@ -154,27 +174,66 @@
     <header class="bg-parchment">
       <div class="max-w-[1440px] mx-auto px-6 py-16 md:py-[72px]">
         <div class="max-w-[900px]">
-          <span
-            class="reveal inline-flex items-center gap-2 rounded-full border border-hairline bg-white px-4 py-1.5 text-[14px] tracking-[-0.224px] text-inkmuted80"
-          >
-            <i data-lucide="calendar-days" class="w-4 h-4 text-action"></i>
-            <span id="rangeLabel"></span>
-          </span>
-          <h1
-            id="heroTitle"
-            class="reveal mt-6 text-[40px] md:text-[56px] font-semibold leading-[1.07] tracking-[-0.28px] text-ink"
-          ></h1>
+          <div class="reveal flex flex-wrap items-center gap-2">
+            <span class="inline-flex items-center gap-2 rounded-full border border-hairline bg-white px-4 py-1.5 text-[14px] tracking-[-0.224px] text-inkmuted80">
+              <i data-lucide="calendar-days" class="w-4 h-4 text-action"></i>
+              <span id="rangeLabel"></span>
+            </span>
+            <span id="streakPill" class="hidden items-center gap-2 rounded-full border border-hairline bg-white px-4 py-1.5 text-[14px] tracking-[-0.224px] text-inkmuted80">
+              <i data-lucide="flame" class="w-4 h-4 text-action"></i>
+              <span id="streakText"></span>
+            </span>
+          </div>
+          <h1 id="heroTitle" class="reveal mt-6 text-[40px] md:text-[56px] font-semibold leading-[1.07] tracking-[-0.28px] text-ink"></h1>
           <p id="heroSubtitle" class="reveal mt-4 text-[21px] md:text-[28px] font-normal leading-[1.14] tracking-[0.196px] text-inkmuted80"></p>
         </div>
 
-        <!-- Phase pills (jump links, not separate tracks) -->
+        <!-- Phase pills -->
         <div class="reveal mt-8 flex flex-wrap gap-2" id="phaseLinks"></div>
+
+        <!-- Toolbar -->
+        <div class="reveal mt-6 flex flex-col lg:flex-row gap-3 lg:items-center">
+          <div class="relative flex-1 max-w-[440px]">
+            <i data-lucide="search" class="w-4 h-4 text-inkmuted absolute left-4 top-1/2 -translate-y-1/2"></i>
+            <input
+              id="search"
+              type="search"
+              placeholder="Search every task…"
+              aria-label="Search tasks"
+              class="w-full rounded-full bg-white border border-hairline pl-10 pr-4 py-2.5 text-[15px] tracking-[-0.224px] text-ink placeholder:text-inkmuted focus:outline-none focus:ring-2 focus:ring-actionfocus focus:border-transparent"
+            />
+          </div>
+          <div class="flex flex-wrap gap-2 text-[14px] tracking-[-0.224px]">
+            <button id="nextBtn" class="press inline-flex items-center gap-1.5 rounded-full bg-action text-white font-semibold px-4 py-2 hover:bg-actionfocus transition-colors">
+              <i data-lucide="locate-fixed" class="w-4 h-4"></i> Next unfinished
+            </button>
+            <button id="hideDoneBtn" aria-pressed="false" class="press inline-flex items-center gap-1.5 rounded-full bg-white border border-hairline text-ink px-4 py-2 hover:border-action transition-colors">
+              <i data-lucide="filter" class="w-4 h-4 text-action"></i> Hide completed
+            </button>
+            <button id="expandBtn" class="press inline-flex items-center gap-1.5 rounded-full bg-white border border-hairline text-ink px-4 py-2 hover:border-action transition-colors">
+              <i data-lucide="chevrons-down-up" class="w-4 h-4 text-action"></i> Expand all
+            </button>
+            <button id="collapseBtn" class="press inline-flex items-center gap-1.5 rounded-full bg-white border border-hairline text-ink px-4 py-2 hover:border-action transition-colors">
+              <i data-lucide="chevrons-up-down" class="w-4 h-4 text-action"></i> Collapse all
+            </button>
+            <button id="exportBtn" class="press inline-flex items-center gap-1.5 rounded-full bg-white border border-hairline text-ink px-4 py-2 hover:border-action transition-colors">
+              <i data-lucide="download" class="w-4 h-4 text-action"></i> Export
+            </button>
+            <button id="importBtn" class="press inline-flex items-center gap-1.5 rounded-full bg-white border border-hairline text-ink px-4 py-2 hover:border-action transition-colors">
+              <i data-lucide="upload" class="w-4 h-4 text-action"></i> Import
+            </button>
+            <button id="resetBtn" class="press inline-flex items-center gap-1.5 rounded-full bg-white border border-hairline text-inkmuted px-4 py-2 hover:border-action hover:text-ink transition-colors">
+              <i data-lucide="rotate-ccw" class="w-4 h-4"></i> Reset
+            </button>
+            <input id="importFile" type="file" accept="application/json,.json" class="hidden" />
+          </div>
+        </div>
 
         <!-- Stat cards -->
         <div class="mt-12 grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div class="reveal bg-white border border-hairline rounded-applelg p-6 flex items-center gap-6">
-            <div class="relative shrink-0">
-              <svg width="112" height="112" viewBox="0 0 112 112" class="-rotate-90">
+            <div class="relative shrink-0" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Overall progress" id="ringWrap">
+              <svg width="112" height="112" viewBox="0 0 112 112" class="-rotate-90" aria-hidden="true">
                 <circle cx="56" cy="56" r="48" fill="none" stroke="#e6e6e6" stroke-width="8" />
                 <circle id="ringMain" cx="56" cy="56" r="48" fill="none" stroke="#0066cc" stroke-width="8" stroke-linecap="round" class="ring-progress" stroke-dasharray="301.6" stroke-dashoffset="301.6" />
               </svg>
@@ -220,7 +279,7 @@
       </div>
     </header>
 
-    <!-- Mission tile (dark) -->
+    <!-- Mission -->
     <section class="bg-tile text-white">
       <div class="max-w-[1440px] mx-auto px-6 py-14 md:py-[72px]">
         <div class="reveal max-w-[920px]">
@@ -230,10 +289,7 @@
       </div>
     </section>
 
-    <!-- Groups render here -->
     <main id="groups"></main>
-
-    <!-- Scorecards render here -->
     <div id="scorecards"></div>
 
     <footer class="bg-parchment">
@@ -243,13 +299,15 @@
             <i data-lucide="hexagon" class="w-4 h-4 text-ink"></i>
             <span class="text-[17px] font-semibold tracking-[-0.374px] text-ink">The Journey</span>
           </div>
-          <span class="text-[12px] tracking-[-0.12px] text-inkmuted">Progress is saved locally in your browser.</span>
+          <span class="text-[12px] tracking-[-0.12px] text-inkmuted">Saved locally. Export regularly to back up across devices.</span>
         </div>
         <div class="mt-6 pt-6 border-t border-hairline text-[12px] tracking-[-0.12px] text-inkmuted">
           One continuous build: deep smart contract engineering into Tesla fleet data engineering.
         </div>
       </div>
     </footer>
+
+    <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[70] hidden rounded-full bg-ink text-white text-[14px] tracking-[-0.224px] px-5 py-2.5 shadow-lg"></div>
 
     <script src="data.js"></script>
     <script src="data-tesla.js"></script>
@@ -258,7 +316,7 @@
       let state = JSON.parse(localStorage.getItem(KEY) || "{}");
       const save = () => localStorage.setItem(KEY, JSON.stringify(state));
 
-      // ---- Adapt Protocol Forge PLAN -> unified groups + scorecard
+      // ---------- build one combined journey ----------
       function adaptProtocolForge(P) {
         return {
           groups: P.weeks.map((wk) => ({
@@ -283,13 +341,11 @@
           scorecard: {
             title: "Final Evidence Standard — Smart Contracts",
             subtitle:
-              "What the GitHub should contain by July 31. Deliberately extreme. When breadth conflicts with rigor, keep the math, testing and security work.",
+              "What the GitHub should contain. Deliberately extreme. When breadth conflicts with rigor, keep the math, testing and security work.",
             items: P.evidence,
           },
         };
       }
-
-      // Tag Tesla groups with their phase, and prefix keys so ids never collide.
       function prepTesla(T) {
         return {
           groups: T.groups.map((g) => ({ ...g, key: `t-${g.key}`, phase: "Tesla Data Engineer" })),
@@ -297,11 +353,9 @@
         };
       }
 
-      // ---- Build ONE combined journey
       const pf = adaptProtocolForge(window.PLAN);
       const te = prepTesla(window.TESLA);
       const plan = {
-        id: "journey",
         title: "The Journey",
         subtitle:
           "One continuous build. First become a deep smart contract engineer, then land and crush Tesla data engineering. The projects can be vibe-coded. The mastery cannot.",
@@ -329,33 +383,76 @@
       const tid = (gk, ik, si, ti) => `${gk}:${ik}:s${si}:t${ti}`;
       const gateId = (gk, ik) => (ik ? `igate:${gk}:${ik}` : `gate:${gk}`);
       const scoreId = (sci, i) => `score:${sci}:${i}`;
+      const noteId = (gk, ik) => `note:${gk}:${ik}`;
 
       let MILES = [];
+      let hideDone = false;
 
-      function itemTaskIds(g, it) {
+      const itemTaskIds = (g, it) => {
         const ids = [];
         it.sections.forEach((sec, si) => sec.tasks.forEach((_, ti) => ids.push(tid(g.key, it.key, si, ti))));
         return ids;
-      }
-      function allTaskIds() {
+      };
+      const allTaskIds = () => {
         const ids = [];
         plan.groups.forEach((g) => g.items.forEach((it) => ids.push(...itemTaskIds(g, it))));
         return ids;
+      };
+      const itemText = (g, it) =>
+        (it.eyebrow + " " + it.title + " " + (it.summary || "") + " " + it.sections.map((s) => s.label + " " + s.tasks.join(" ")).join(" ")).toLowerCase();
+
+      // ---------- streak ----------
+      const dstr = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+      function recordActivity() {
+        const set = new Set(state._active || []);
+        set.add(dstr(new Date()));
+        state._active = [...set];
+      }
+      function computeStreak() {
+        const set = new Set(state._active || []);
+        if (!set.size) return 0;
+        let d = new Date();
+        if (!set.has(dstr(d))) {
+          d.setDate(d.getDate() - 1);
+          if (!set.has(dstr(d))) return 0;
+        }
+        let s = 0;
+        while (set.has(dstr(d))) {
+          s++;
+          d.setDate(d.getDate() - 1);
+        }
+        return s;
+      }
+      function updateStreakUI() {
+        const s = computeStreak();
+        const pill = document.getElementById("streakPill");
+        if (s > 0) {
+          pill.classList.remove("hidden");
+          pill.classList.add("inline-flex");
+          document.getElementById("streakText").textContent = `${s}-day streak`;
+        } else {
+          pill.classList.add("hidden");
+          pill.classList.remove("inline-flex");
+        }
       }
 
-      function checkbox(id, text, dark) {
+      function toast(msg) {
+        const t = document.getElementById("toast");
+        t.textContent = msg;
+        t.classList.remove("hidden");
+        clearTimeout(t._timer);
+        t._timer = setTimeout(() => t.classList.add("hidden"), 2200);
+      }
+
+      function checkbox(id, text) {
         const on = !!state[id];
         return `
         <label class="flex items-start gap-3 py-1.5 cursor-pointer select-none">
-          <span class="cbx mt-[2px] shrink-0 w-[20px] h-[20px] rounded-[6px] border flex items-center justify-center transition-all duration-150 ${
-            on ? "bg-action border-action" : dark ? "border-white/30" : "border-hairline"
-          }">
+          <span class="cbx mt-[2px] shrink-0 w-[20px] h-[20px] rounded-[6px] border flex items-center justify-center transition-all duration-150 ${on ? "bg-action border-action" : "border-hairline"}">
             <i data-lucide="check" class="w-3.5 h-3.5 text-white ${on ? "" : "opacity-0"}"></i>
           </span>
           <input type="checkbox" class="hidden task-cb" data-id="${id}" ${on ? "checked" : ""} />
-          <span class="text-[15px] leading-[1.45] tracking-[-0.224px] ${
-            on ? (dark ? "text-white/40 line-through" : "text-inkmuted line-through") : dark ? "text-white/85" : "text-inkmuted80"
-          }">${text}</span>
+          <span class="text-[15px] leading-[1.45] tracking-[-0.224px] ${on ? "text-inkmuted line-through" : "text-inkmuted80"}">${text}</span>
         </label>`;
       }
 
@@ -379,7 +476,6 @@
           </div>`;
       }
 
-      // ---- render
       function render() {
         MILES = [];
         document.getElementById("rangeLabel").textContent = plan.range;
@@ -388,7 +484,7 @@
         document.getElementById("missionText").textContent = plan.mission;
         document.getElementById("tasksTotal").textContent = allTaskIds().length;
 
-        // phase jump pills (derived from group.phase, in order, first group of each phase)
+        // phase pills
         const phaseLinks = document.getElementById("phaseLinks");
         phaseLinks.innerHTML = "";
         const seen = new Set();
@@ -397,14 +493,15 @@
             seen.add(g.phase);
             const a = document.createElement("a");
             a.href = `#grp-${g.key}`;
+            a.dataset.phase = g.phase;
             a.className =
               "press inline-flex items-center gap-1.5 rounded-full bg-white border border-hairline px-4 py-1.5 text-[14px] font-semibold tracking-[-0.224px] text-ink hover:border-action transition-colors";
-            a.innerHTML = `<i data-lucide="arrow-down" class="w-3.5 h-3.5 text-action"></i> ${g.phase}`;
+            a.innerHTML = `<i data-lucide="arrow-down" class="w-3.5 h-3.5 text-action"></i> ${g.phase} <span class="text-inkmuted font-normal" data-phasepct="${g.phase}"></span>`;
             phaseLinks.appendChild(a);
           }
         });
 
-        // nav chips (one per group)
+        // nav chips
         const navWeeks = document.getElementById("navWeeks");
         navWeeks.innerHTML = "";
         plan.groups.forEach((g, gi) => {
@@ -412,8 +509,8 @@
           a.href = `#grp-${g.key}`;
           a.textContent = gi + 1;
           a.id = `navchip-${g.key}`;
-          a.className =
-            "press w-5 h-5 flex items-center justify-center rounded-full text-[11px] text-white/55 hover:text-white transition-colors";
+          a.title = `${g.phase} · ${g.tag}: ${g.title}`;
+          a.className = "press w-5 h-5 flex items-center justify-center rounded-full text-[11px] text-white/55 hover:text-white transition-colors";
           navWeeks.appendChild(a);
         });
 
@@ -423,7 +520,6 @@
         plan.groups.forEach((g, gi) => {
           const tileClass = TILE_CYCLE[gi % 3];
           const dark = tileClass === "bg-tile";
-
           if (g.gate) MILES.push(gateId(g.key, null));
           g.items.forEach((it) => {
             if (it.gate) MILES.push(gateId(g.key, it.key));
@@ -437,7 +533,7 @@
             .map((it) => {
               const secsHtml = it.sections
                 .map((sec, si) => {
-                  const rows = sec.tasks.map((t, ti) => checkbox(tid(g.key, it.key, si, ti), t, false)).join("");
+                  const rows = sec.tasks.map((t, ti) => checkbox(tid(g.key, it.key, si, ti), t)).join("");
                   return `
                   <div>
                     <div class="flex items-center gap-2 mb-2">
@@ -449,13 +545,10 @@
                 })
                 .join("");
               const cols = it.sections.length >= 3 ? "md:grid-cols-3" : it.sections.length === 2 ? "md:grid-cols-2" : "md:grid-cols-1";
-              const summaryLine = it.summary
-                ? `<p class="text-[14px] leading-[1.45] tracking-[-0.224px] text-inkmuted mt-1 mb-3">${it.summary}</p>`
-                : "";
+              const summaryLine = it.summary ? `<p class="text-[14px] leading-[1.45] tracking-[-0.224px] text-inkmuted mt-1 mb-3">${it.summary}</p>` : "";
               const itemGate = it.gate ? gateBlock(g.key, it.key, it.gate, false) : "";
-
               return `
-              <details class="bg-white border border-hairline rounded-applelg overflow-hidden">
+              <details class="bg-white border border-hairline rounded-applelg overflow-hidden" data-item="${g.key}:${it.key}">
                 <summary class="press flex items-center gap-3 p-5 cursor-pointer">
                   <i data-lucide="chevron-right" class="chev w-5 h-5 text-inkmuted shrink-0"></i>
                   <span class="shrink-0 w-6 h-6 rounded-full border flex items-center justify-center border-hairline" data-itemdot="${g.key}:${it.key}">
@@ -471,14 +564,18 @@
                   ${summaryLine}
                   <div class="grid grid-cols-1 ${cols} gap-7 ${summaryLine ? "" : "pt-1"}">${secsHtml}</div>
                   ${itemGate}
+                  <div class="mt-5">
+                    <label class="flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.04em] text-inkmuted mb-2" for="ta-${g.key}-${it.key}">
+                      <i data-lucide="pencil-line" class="w-4 h-4 text-action"></i> Notes
+                    </label>
+                    <textarea id="ta-${g.key}-${it.key}" class="note-ta w-full rounded-applemd border border-hairline bg-pearl px-4 py-3 text-[15px] leading-[1.5] tracking-[-0.224px] text-ink placeholder:text-inkmuted focus:outline-none focus:ring-2 focus:ring-actionfocus focus:border-transparent" rows="2" placeholder="Defense notes, what you shipped, what broke, what you can now claim…" data-note="${noteId(g.key, it.key)}"></textarea>
+                  </div>
                 </div>
               </details>`;
             })
             .join("");
 
-          const phaseTag = g.phase
-            ? `<span class="text-[12px] font-semibold uppercase tracking-[0.06em] ${dark ? "text-white/40" : "text-inkmuted"}">${g.phase}</span>`
-            : "";
+          const phaseTag = g.phase ? `<span class="text-[12px] font-semibold uppercase tracking-[0.06em] ${dark ? "text-white/40" : "text-inkmuted"}">${g.phase}</span>` : "";
 
           section.innerHTML = `
             <div class="max-w-[1440px] mx-auto px-6 py-14 md:py-[72px]">
@@ -497,13 +594,13 @@
                   <div class="text-[34px] font-semibold tracking-[-0.5px] tabular-nums ${dark ? "text-white" : "text-ink"}" id="grppct-${g.key}">0%</div>
                 </div>
               </div>
-              <div class="space-y-3">${itemsHtml}</div>
+              <div class="space-y-3" data-itemswrap="${g.key}">${itemsHtml}</div>
               ${g.gate ? gateBlock(g.key, null, g.gate, dark) : ""}
             </div>`;
           groupsEl.appendChild(section);
         });
 
-        // scorecards (dark tiles, alternating tile3 / tile)
+        // scorecards
         const scWrap = document.getElementById("scorecards");
         scWrap.innerHTML = "";
         plan.scorecards.forEach((sc, sci) => {
@@ -546,9 +643,16 @@
           mileDots.appendChild(d);
         });
 
+        // populate notes (via value to avoid HTML-escaping issues)
+        document.querySelectorAll(".note-ta").forEach((ta) => {
+          ta.value = state[ta.dataset.note] || "";
+        });
+
         document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
         lucide.createIcons();
+        updateStreakUI();
         recompute();
+        applyFilters();
       }
 
       function recompute() {
@@ -559,9 +663,13 @@
         document.getElementById("tasksDone").textContent = done;
         document.getElementById("ringPct").textContent = pct + "%";
         document.getElementById("navPct").textContent = pct + "%";
+        document.getElementById("ringWrap").setAttribute("aria-valuenow", String(pct));
+        document.title = `${pct}% · The Journey`;
         const C = 2 * Math.PI * 48;
         document.getElementById("ringMain").style.strokeDashoffset = C - (C * pct) / 100;
 
+        // per-phase totals
+        const phaseTotals = {};
         let itemsDone = 0;
         let itemsTotal = 0;
         plan.groups.forEach((g) => {
@@ -585,6 +693,8 @@
             }
             const lbl = document.querySelector(`[data-itemprog="${g.key}:${it.key}"]`);
             if (lbl) lbl.textContent = `${itDone}/${itIds.length}`;
+            const det = document.querySelector(`[data-item="${g.key}:${it.key}"]`);
+            if (det) det.dataset.done = c ? "true" : "false";
           });
           const gDone = gTaskIds.filter((id) => state[id]).length;
           const gp = gTaskIds.length ? Math.round((gDone / gTaskIds.length) * 100) : 0;
@@ -597,10 +707,20 @@
             chip.classList.toggle("text-white", full);
             chip.classList.toggle("text-white/55", !full);
           }
+          if (g.phase) {
+            const pt = (phaseTotals[g.phase] = phaseTotals[g.phase] || { d: 0, t: 0 });
+            pt.d += gDone;
+            pt.t += gTaskIds.length;
+          }
         });
         document.getElementById("itemsDone").textContent = itemsDone;
         document.getElementById("itemsTotal").textContent = itemsTotal;
         document.getElementById("itemsBar").style.width = (itemsTotal ? (itemsDone / itemsTotal) * 100 : 0) + "%";
+
+        Object.entries(phaseTotals).forEach(([phase, pt]) => {
+          const el = document.querySelector(`[data-phasepct="${phase}"]`);
+          if (el) el.textContent = `· ${pt.t ? Math.round((pt.d / pt.t) * 100) : 0}%`;
+        });
 
         let milesDone = 0;
         MILES.forEach((mid) => {
@@ -633,26 +753,144 @@
         document.getElementById("subStats").textContent = `${itemsDone}/${itemsTotal} modules · ${milesDone}/${MILES.length} gates`;
       }
 
+      // ---------- filters ----------
+      function applyFilters() {
+        const q = (document.getElementById("search").value || "").trim().toLowerCase();
+        plan.groups.forEach((g) => {
+          const section = document.getElementById(`grp-${g.key}`);
+          if (!section) return;
+          let visible = 0;
+          g.items.forEach((it) => {
+            const det = section.querySelector(`[data-item="${g.key}:${it.key}"]`);
+            if (!det) return;
+            const done = itemTaskIds(g, it).every((id) => state[id]);
+            let show = true;
+            if (q && !itemText(g, it).includes(q)) show = false;
+            if (hideDone && done) show = false;
+            det.style.display = show ? "" : "none";
+            if (show) visible++;
+          });
+          section.style.display = visible === 0 && (q || hideDone) ? "none" : "";
+        });
+      }
+
+      // ---------- events ----------
       document.addEventListener("change", (e) => {
         const cb = e.target.closest(".task-cb, .gate-cb");
         if (!cb) return;
         if (cb.checked) state[cb.dataset.id] = true;
         else delete state[cb.dataset.id];
+        recordActivity();
         save();
-        const label = cb.closest("label");
-        const box = label.querySelector(".cbx");
+        const box = cb.closest("label").querySelector(".cbx");
         if (box) box.querySelector("i").classList.toggle("opacity-0", !cb.checked);
         recompute();
+        updateStreakUI();
+        if (hideDone) applyFilters();
+      });
+
+      let noteTimer;
+      document.addEventListener("input", (e) => {
+        const ta = e.target.closest(".note-ta");
+        if (!ta) return;
+        clearTimeout(noteTimer);
+        noteTimer = setTimeout(() => {
+          const v = ta.value;
+          if (v) state[ta.dataset.note] = v;
+          else delete state[ta.dataset.note];
+          recordActivity();
+          save();
+          updateStreakUI();
+        }, 400);
+      });
+
+      document.getElementById("search").addEventListener("input", applyFilters);
+
+      document.getElementById("hideDoneBtn").addEventListener("click", (e) => {
+        hideDone = !hideDone;
+        const b = e.currentTarget;
+        b.setAttribute("aria-pressed", String(hideDone));
+        b.classList.toggle("bg-action", hideDone);
+        b.classList.toggle("text-white", hideDone);
+        b.classList.toggle("bg-white", !hideDone);
+        b.classList.toggle("text-ink", !hideDone);
+        applyFilters();
+      });
+
+      document.getElementById("expandBtn").addEventListener("click", () => {
+        document.querySelectorAll("#groups details").forEach((d) => {
+          if (d.style.display !== "none") d.open = true;
+        });
+      });
+      document.getElementById("collapseBtn").addEventListener("click", () => {
+        document.querySelectorAll("#groups details").forEach((d) => (d.open = false));
+      });
+
+      document.getElementById("nextBtn").addEventListener("click", () => {
+        document.getElementById("search").value = "";
+        applyFilters();
+        for (const g of plan.groups) {
+          for (const it of g.items) {
+            if (!itemTaskIds(g, it).every((id) => state[id])) {
+              const det = document.querySelector(`[data-item="${g.key}:${it.key}"]`);
+              if (det) {
+                det.style.display = "";
+                det.open = true;
+                det.scrollIntoView({ behavior: "smooth", block: "center" });
+                det.classList.add("flash-target");
+                setTimeout(() => det.classList.remove("flash-target"), 1500);
+              }
+              return;
+            }
+          }
+        }
+        toast("Everything is complete. Incredible work.");
+      });
+
+      // export / import
+      document.getElementById("exportBtn").addEventListener("click", () => {
+        const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `the-journey-progress-${dstr(new Date())}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+        toast("Progress exported.");
+      });
+      document.getElementById("importBtn").addEventListener("click", () => document.getElementById("importFile").click());
+      document.getElementById("importFile").addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+          try {
+            const data = JSON.parse(reader.result);
+            if (typeof data !== "object" || data === null) throw new Error("bad");
+            if (!confirm("Import this backup? It replaces your current progress in this browser.")) return;
+            state = data;
+            save();
+            render();
+            window.scrollTo({ top: 0, behavior: "auto" });
+            toast("Progress imported.");
+          } catch (err) {
+            toast("Could not read that file.");
+          }
+        };
+        reader.readAsText(file);
+        e.target.value = "";
       });
 
       document.getElementById("resetBtn").addEventListener("click", () => {
-        if (!confirm("Reset ALL progress across the whole journey? This clears every checkbox.")) return;
+        if (!confirm("Reset ALL progress across the whole journey? This clears every checkbox and note. Export first if unsure.")) return;
         state = {};
         save();
         render();
         window.scrollTo({ top: 0, behavior: "auto" });
+        toast("Progress reset.");
       });
 
+      // reading progress bar
       const bar = document.getElementById("progress-bar");
       window.addEventListener(
         "scroll",
@@ -676,6 +914,13 @@
       );
 
       render();
+
+      // PWA service worker (only over http/https, not file://)
+      if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker.register("sw.js").catch(() => {});
+        });
+      }
     </script>
   </body>
 </html>
