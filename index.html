@@ -518,11 +518,11 @@
         const on = !!state[id];
         return `
         <label class="flex items-start gap-3 py-1.5 cursor-pointer select-none">
-          <span class="cbx mt-[2px] shrink-0 w-[20px] h-[20px] rounded-[6px] border flex items-center justify-center transition-all duration-150 ${on ? "bg-action border-action" : "border-hairline"}">
-            <i data-lucide="check" class="w-3.5 h-3.5 text-white ${on ? "" : "opacity-0"}"></i>
+          <input type="checkbox" class="peer hidden task-cb" data-id="${id}" ${on ? "checked" : ""} />
+          <span class="mt-[2px] shrink-0 w-[20px] h-[20px] rounded-[6px] border border-hairline flex items-center justify-center transition-all duration-150 peer-checked:bg-action peer-checked:border-action">
+            <i data-lucide="check" class="chk w-3.5 h-3.5 text-white ${on ? "" : "opacity-0"}"></i>
           </span>
-          <input type="checkbox" class="hidden task-cb" data-id="${id}" ${on ? "checked" : ""} />
-          <span class="text-[15px] leading-[1.45] tracking-[-0.224px] ${on ? "text-inkmuted line-through" : "text-inkmuted80"}">${text}</span>
+          <span class="text-[15px] leading-[1.45] tracking-[-0.224px] peer-checked:line-through peer-checked:text-inkmuted ${on ? "text-inkmuted line-through" : "text-inkmuted80"}">${text}</span>
         </label>`;
       }
 
@@ -532,10 +532,10 @@
         return `
           <div class="mt-4 rounded-applelg border ${dark ? "border-white/15 bg-white/5" : "border-hairline bg-white"} p-5">
             <label class="flex items-start gap-3 cursor-pointer select-none">
-              <span class="cbx mt-[2px] shrink-0 w-[20px] h-[20px] rounded-[6px] border flex items-center justify-center transition-all duration-150 ${on ? "bg-action border-action" : dark ? "border-white/30" : "border-hairline"}" data-gate="${id}">
-                <i data-lucide="check" class="w-3.5 h-3.5 text-white ${on ? "" : "opacity-0"}"></i>
+              <input type="checkbox" class="peer hidden gate-cb" data-id="${id}" ${on ? "checked" : ""} />
+              <span class="mt-[2px] shrink-0 w-[20px] h-[20px] rounded-[6px] border flex items-center justify-center transition-all duration-150 peer-checked:bg-action peer-checked:border-action ${dark ? "border-white/30" : "border-hairline"}" data-gate="${id}">
+                <i data-lucide="check" class="chk w-3.5 h-3.5 text-white ${on ? "" : "opacity-0"}"></i>
               </span>
-              <input type="checkbox" class="hidden gate-cb" data-id="${id}" ${on ? "checked" : ""} />
               <span>
                 <span class="flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.04em] ${dark ? "text-sky" : "text-action"} mb-1">
                   <i data-lucide="shield-check" class="w-4 h-4"></i> ${gate.label}
@@ -683,11 +683,11 @@
               const on = !!state[id];
               return `
               <label class="flex items-start gap-3 p-4 rounded-applemd border cursor-pointer select-none transition-colors duration-200 ${on ? "border-action bg-action/10" : "border-white/15 bg-white/5"}" data-score="${id}">
-                <span class="cbx mt-[2px] shrink-0 w-[20px] h-[20px] rounded-[6px] border flex items-center justify-center transition-all duration-150 ${on ? "bg-action border-action" : "border-white/30"}">
-                  <i data-lucide="check" class="w-3.5 h-3.5 text-white ${on ? "" : "opacity-0"}"></i>
+                <input type="checkbox" class="peer hidden task-cb" data-id="${id}" ${on ? "checked" : ""} />
+                <span class="mt-[2px] shrink-0 w-[20px] h-[20px] rounded-[6px] border border-white/30 flex items-center justify-center transition-all duration-150 peer-checked:bg-action peer-checked:border-action">
+                  <i data-lucide="check" class="chk w-3.5 h-3.5 text-white ${on ? "" : "opacity-0"}"></i>
                 </span>
-                <input type="checkbox" class="hidden task-cb" data-id="${id}" ${on ? "checked" : ""} />
-                <span class="text-[15px] leading-[1.45] tracking-[-0.224px] ${on ? "text-white/60" : "text-white/90"}">${e}</span>
+                <span class="text-[15px] leading-[1.45] tracking-[-0.224px] peer-checked:text-white/60 ${on ? "text-white/60" : "text-white/90"}">${e}</span>
               </label>`;
             })
             .join("");
@@ -753,13 +753,15 @@
             const itDone = itIds.filter((id) => state[id]).length;
             const dot = document.querySelector(`[data-itemdot="${g.key}:${it.key}"]`);
             if (dot) {
-              const ic = dot.querySelector("i");
+              const ic = dot.querySelector("i, svg");
               dot.classList.toggle("bg-action", c);
               dot.classList.toggle("border-action", c);
               dot.classList.toggle("border-hairline", !c);
-              ic.classList.toggle("text-white", c);
-              ic.classList.toggle("text-action", !c);
-              ic.classList.toggle("opacity-0", !c);
+              if (ic) {
+                ic.classList.toggle("text-white", c);
+                ic.classList.toggle("text-action", !c);
+                ic.classList.toggle("opacity-0", !c);
+              }
             }
             const lbl = document.querySelector(`[data-itemprog="${g.key}:${it.key}"]`);
             if (lbl) lbl.textContent = `${itDone}/${itIds.length}`;
@@ -807,7 +809,7 @@
 
         document.querySelectorAll("[data-gate]").forEach((box) => {
           const on = !!state[box.dataset.gate];
-          const ic = box.querySelector("i");
+          const ic = box.querySelector("i, svg");
           box.classList.toggle("bg-action", on);
           box.classList.toggle("border-action", on);
           if (ic) ic.classList.toggle("opacity-0", !on);
@@ -852,8 +854,10 @@
         else delete state[cb.dataset.id];
         recordActivity();
         save();
-        const box = cb.closest("label").querySelector(".cbx");
-        if (box) box.querySelector("i").classList.toggle("opacity-0", !cb.checked);
+        // peer-checked CSS fills the box; also toggle the check glyph directly
+        // (lucide rewrites <i> to <svg>, so target the stable .chk class).
+        const ic = cb.closest("label").querySelector(".chk");
+        if (ic) ic.classList.toggle("opacity-0", !cb.checked);
         recompute();
         updateStreakUI();
         if (hideDone) applyFilters();
