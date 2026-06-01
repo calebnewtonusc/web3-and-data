@@ -100,6 +100,13 @@
       ::selection {
         background: rgba(0, 102, 204, 0.18);
       }
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
       :focus-visible {
         outline: 2px solid #0071e3;
         outline-offset: 2px;
@@ -143,12 +150,16 @@
     <!-- Global nav -->
     <nav class="fixed top-0 inset-x-0 z-50 bg-black text-white" style="height: 44px">
       <div class="max-w-[1440px] mx-auto h-full px-6 flex items-center justify-between">
-        <a href="#top" class="flex items-center gap-2 press">
+        <button data-page="home" class="flex items-center gap-2 press" aria-label="Home">
           <i data-lucide="hexagon" class="w-[15px] h-[15px] text-white"></i>
           <span class="text-[12px] font-normal tracking-[-0.12px]">The Journey</span>
-        </a>
-        <div class="hidden md:flex items-center gap-[14px]" id="navWeeks"></div>
-        <span id="navPct" class="text-[12px] tracking-[-0.12px] text-white/70 tabular-nums">0%</span>
+        </button>
+        <div class="flex items-center gap-4">
+          <span id="syncStatus" class="inline-flex items-center gap-1.5 text-[12px] tracking-[-0.12px] text-white/70" title="Sync status">
+            <i data-lucide="cloud" class="w-4 h-4"></i><span id="syncText" class="hidden sm:inline">Local</span>
+          </span>
+          <span id="navPct" class="text-[12px] tracking-[-0.12px] text-white/70 tabular-nums">0%</span>
+        </div>
       </div>
     </nav>
 
@@ -162,18 +173,59 @@
         -webkit-backdrop-filter: saturate(180%) blur(20px);
       "
     >
-      <div class="max-w-[1440px] mx-auto h-full px-6 flex items-center justify-between">
-        <span class="text-[21px] font-semibold tracking-[0.231px] text-ink">The Journey</span>
-        <div class="flex items-center gap-4">
-          <span id="syncStatus" class="inline-flex items-center gap-1.5 text-[13px] tracking-[-0.224px] text-inkmuted" title="Sync status">
-            <i data-lucide="cloud" class="w-4 h-4"></i><span id="syncText" class="hidden sm:inline">Local</span>
-          </span>
-          <span class="hidden md:inline text-[14px] tracking-[-0.224px] text-inkmuted tabular-nums" id="subStats"></span>
-        </div>
+      <div class="max-w-[1440px] mx-auto h-full px-6 flex items-center justify-between gap-4">
+        <div id="pageTabs" class="flex items-center gap-1 overflow-x-auto no-scrollbar"></div>
+        <span class="hidden md:inline text-[14px] tracking-[-0.224px] text-inkmuted tabular-nums shrink-0" id="subStats"></span>
       </div>
     </div>
 
     <div style="height: 96px" id="top"></div>
+
+    <!-- Global toolbar (shown only on list pages) -->
+    <div id="toolbar" class="hidden sticky top-[96px] z-30 border-b border-hairline" style="background: rgba(245,245,247,0.92); backdrop-filter: saturate(180%) blur(12px);">
+      <div class="max-w-[1440px] mx-auto px-6 py-3 flex flex-col lg:flex-row gap-3 lg:items-center">
+        <div class="relative flex-1 max-w-[440px]">
+          <i data-lucide="search" class="w-4 h-4 text-inkmuted absolute left-4 top-1/2 -translate-y-1/2"></i>
+          <input
+            id="search"
+            type="search"
+            placeholder="Search every task…"
+            aria-label="Search tasks"
+            class="w-full rounded-full bg-white border border-hairline pl-10 pr-4 py-2.5 text-[15px] tracking-[-0.224px] text-ink placeholder:text-inkmuted focus:outline-none focus:ring-2 focus:ring-actionfocus focus:border-transparent"
+          />
+        </div>
+        <div class="flex flex-wrap gap-2 text-[14px] tracking-[-0.224px]">
+          <button id="nextBtn" class="press inline-flex items-center gap-1.5 rounded-full bg-action text-white font-semibold px-4 py-2 hover:bg-actionfocus transition-colors">
+            <i data-lucide="locate-fixed" class="w-4 h-4"></i> Next unfinished
+          </button>
+          <button id="hideDoneBtn" aria-pressed="false" class="press inline-flex items-center gap-1.5 rounded-full bg-white border border-hairline text-ink px-4 py-2 hover:border-action transition-colors">
+            <i data-lucide="filter" class="w-4 h-4 text-action"></i> Hide completed
+          </button>
+          <button id="expandBtn" class="press inline-flex items-center gap-1.5 rounded-full bg-white border border-hairline text-ink px-4 py-2 hover:border-action transition-colors">
+            <i data-lucide="chevrons-down-up" class="w-4 h-4 text-action"></i> Expand all
+          </button>
+          <button id="collapseBtn" class="press inline-flex items-center gap-1.5 rounded-full bg-white border border-hairline text-ink px-4 py-2 hover:border-action transition-colors">
+            <i data-lucide="chevrons-up-down" class="w-4 h-4 text-action"></i> Collapse all
+          </button>
+          <button id="focusBtn" aria-pressed="false" class="press inline-flex items-center gap-1.5 rounded-full bg-white border border-hairline text-ink px-4 py-2 hover:border-action transition-colors">
+            <i data-lucide="crosshair" class="w-4 h-4 text-action"></i> Focus this week
+          </button>
+          <button id="exportBtn" class="press inline-flex items-center gap-1.5 rounded-full bg-white border border-hairline text-ink px-4 py-2 hover:border-action transition-colors">
+            <i data-lucide="download" class="w-4 h-4 text-action"></i> Export
+          </button>
+          <button id="importBtn" class="press inline-flex items-center gap-1.5 rounded-full bg-white border border-hairline text-ink px-4 py-2 hover:border-action transition-colors">
+            <i data-lucide="upload" class="w-4 h-4 text-action"></i> Import
+          </button>
+          <button id="resetBtn" class="press inline-flex items-center gap-1.5 rounded-full bg-white border border-hairline text-inkmuted px-4 py-2 hover:border-action hover:text-ink transition-colors">
+            <i data-lucide="rotate-ccw" class="w-4 h-4"></i> Reset
+          </button>
+          <input id="importFile" type="file" accept="application/json,.json" class="hidden" />
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PAGE: Home ===== -->
+    <div id="page-home" class="page">
 
     <!-- Hero -->
     <header class="bg-parchment">
@@ -194,50 +246,6 @@
           </div>
           <h1 id="heroTitle" class="reveal mt-6 text-[40px] md:text-[56px] font-semibold leading-[1.07] tracking-[-0.28px] text-ink"></h1>
           <p id="heroSubtitle" class="reveal mt-4 text-[21px] md:text-[28px] font-normal leading-[1.14] tracking-[0.196px] text-inkmuted80"></p>
-        </div>
-
-        <!-- Phase pills -->
-        <div class="reveal mt-8 flex flex-wrap gap-2" id="phaseLinks"></div>
-
-        <!-- Toolbar -->
-        <div class="reveal mt-6 flex flex-col lg:flex-row gap-3 lg:items-center">
-          <div class="relative flex-1 max-w-[440px]">
-            <i data-lucide="search" class="w-4 h-4 text-inkmuted absolute left-4 top-1/2 -translate-y-1/2"></i>
-            <input
-              id="search"
-              type="search"
-              placeholder="Search every task…"
-              aria-label="Search tasks"
-              class="w-full rounded-full bg-white border border-hairline pl-10 pr-4 py-2.5 text-[15px] tracking-[-0.224px] text-ink placeholder:text-inkmuted focus:outline-none focus:ring-2 focus:ring-actionfocus focus:border-transparent"
-            />
-          </div>
-          <div class="flex flex-wrap gap-2 text-[14px] tracking-[-0.224px]">
-            <button id="nextBtn" class="press inline-flex items-center gap-1.5 rounded-full bg-action text-white font-semibold px-4 py-2 hover:bg-actionfocus transition-colors">
-              <i data-lucide="locate-fixed" class="w-4 h-4"></i> Next unfinished
-            </button>
-            <button id="hideDoneBtn" aria-pressed="false" class="press inline-flex items-center gap-1.5 rounded-full bg-white border border-hairline text-ink px-4 py-2 hover:border-action transition-colors">
-              <i data-lucide="filter" class="w-4 h-4 text-action"></i> Hide completed
-            </button>
-            <button id="expandBtn" class="press inline-flex items-center gap-1.5 rounded-full bg-white border border-hairline text-ink px-4 py-2 hover:border-action transition-colors">
-              <i data-lucide="chevrons-down-up" class="w-4 h-4 text-action"></i> Expand all
-            </button>
-            <button id="collapseBtn" class="press inline-flex items-center gap-1.5 rounded-full bg-white border border-hairline text-ink px-4 py-2 hover:border-action transition-colors">
-              <i data-lucide="chevrons-up-down" class="w-4 h-4 text-action"></i> Collapse all
-            </button>
-            <button id="focusBtn" aria-pressed="false" class="press inline-flex items-center gap-1.5 rounded-full bg-white border border-hairline text-ink px-4 py-2 hover:border-action transition-colors">
-              <i data-lucide="crosshair" class="w-4 h-4 text-action"></i> Focus this week
-            </button>
-            <button id="exportBtn" class="press inline-flex items-center gap-1.5 rounded-full bg-white border border-hairline text-ink px-4 py-2 hover:border-action transition-colors">
-              <i data-lucide="download" class="w-4 h-4 text-action"></i> Export
-            </button>
-            <button id="importBtn" class="press inline-flex items-center gap-1.5 rounded-full bg-white border border-hairline text-ink px-4 py-2 hover:border-action transition-colors">
-              <i data-lucide="upload" class="w-4 h-4 text-action"></i> Import
-            </button>
-            <button id="resetBtn" class="press inline-flex items-center gap-1.5 rounded-full bg-white border border-hairline text-inkmuted px-4 py-2 hover:border-action hover:text-ink transition-colors">
-              <i data-lucide="rotate-ccw" class="w-4 h-4"></i> Reset
-            </button>
-            <input id="importFile" type="file" accept="application/json,.json" class="hidden" />
-          </div>
         </div>
 
         <!-- Stat cards -->
@@ -302,9 +310,22 @@
 
     <!-- How to use + setup -->
     <div id="intro"></div>
+    </div><!-- /page-home -->
 
-    <main id="groups"></main>
-    <div id="scorecards"></div>
+    <!-- ===== PAGE: Protocol Forge ===== -->
+    <div id="page-web3" class="page hidden">
+      <main id="groups-web3"></main>
+    </div>
+
+    <!-- ===== PAGE: Tesla ===== -->
+    <div id="page-tesla" class="page hidden">
+      <main id="groups-tesla"></main>
+    </div>
+
+    <!-- ===== PAGE: Scorecards ===== -->
+    <div id="page-scorecards" class="page hidden">
+      <div id="scorecards"></div>
+    </div>
 
     <footer class="bg-parchment">
       <div class="max-w-[1440px] mx-auto px-6 py-16">
@@ -589,40 +610,16 @@
         document.getElementById("missionText").textContent = plan.mission;
         document.getElementById("tasksTotal").textContent = allTaskIds().length;
 
-        // phase pills
-        const phaseLinks = document.getElementById("phaseLinks");
-        phaseLinks.innerHTML = "";
-        const seen = new Set();
+        // groups split across pages (Protocol Forge -> web3, rest -> tesla)
+        const webEl = document.getElementById("groups-web3");
+        const teslaEl = document.getElementById("groups-tesla");
+        webEl.innerHTML = "";
+        teslaEl.innerHTML = "";
+        let _wi = 0,
+          _ti = 0;
         plan.groups.forEach((g) => {
-          if (g.phase && !seen.has(g.phase)) {
-            seen.add(g.phase);
-            const a = document.createElement("a");
-            a.href = `#grp-${g.key}`;
-            a.dataset.phase = g.phase;
-            a.className =
-              "press inline-flex items-center gap-1.5 rounded-full bg-white border border-hairline px-4 py-1.5 text-[14px] font-semibold tracking-[-0.224px] text-ink hover:border-action transition-colors";
-            a.innerHTML = `<i data-lucide="arrow-down" class="w-3.5 h-3.5 text-action"></i> ${g.phase} <span class="text-inkmuted font-normal" data-phasepct="${g.phase}"></span>`;
-            phaseLinks.appendChild(a);
-          }
-        });
-
-        // nav chips
-        const navWeeks = document.getElementById("navWeeks");
-        navWeeks.innerHTML = "";
-        plan.groups.forEach((g, gi) => {
-          const a = document.createElement("a");
-          a.href = `#grp-${g.key}`;
-          a.textContent = gi + 1;
-          a.id = `navchip-${g.key}`;
-          a.title = `${g.phase} · ${g.tag}: ${g.title}`;
-          a.className = "press w-5 h-5 flex items-center justify-center rounded-full text-[11px] text-white/55 hover:text-white transition-colors";
-          navWeeks.appendChild(a);
-        });
-
-        // groups
-        const groupsEl = document.getElementById("groups");
-        groupsEl.innerHTML = "";
-        plan.groups.forEach((g, gi) => {
+          const isWeb = g.phase === "Protocol Forge";
+          const gi = isWeb ? _wi++ : _ti++;
           const tileClass = TILE_CYCLE[gi % 3];
           const dark = tileClass === "bg-tile";
           if (g.gate) MILES.push(gateId(g.key, null));
@@ -703,7 +700,7 @@
               <div class="space-y-3" data-itemswrap="${g.key}">${itemsHtml}</div>
               ${g.gate ? gateBlock(g.key, null, g.gate, dark) : ""}
             </div>`;
-          groupsEl.appendChild(section);
+          (isWeb ? webEl : teslaEl).appendChild(section);
         });
 
         // scorecards
@@ -796,15 +793,18 @@
       function jumpToItem(gk, ik) {
         document.getElementById("search").value = "";
         if (focusMode) { focusMode = false; applyFocus(); }
+        showPage(pageOf(gk));
         applyFilters();
-        const det = document.querySelector(`[data-item="${gk}:${ik}"]`);
-        if (det) {
-          det.style.display = "";
-          det.open = true;
-          det.scrollIntoView({ behavior: "smooth", block: "center" });
-          det.classList.add("flash-target");
-          setTimeout(() => det.classList.remove("flash-target"), 1500);
-        }
+        requestAnimationFrame(() => {
+          const det = document.querySelector(`[data-item="${gk}:${ik}"]`);
+          if (det) {
+            det.style.display = "";
+            det.open = true;
+            det.scrollIntoView({ behavior: "smooth", block: "center" });
+            det.classList.add("flash-target");
+            setTimeout(() => det.classList.remove("flash-target"), 1500);
+          }
+        });
       }
 
       function renderTodayFocus() {
@@ -921,18 +921,18 @@
         btn.classList.toggle("bg-white", !focusMode);
         btn.classList.toggle("text-ink", !focusMode);
         if (!focusMode) {
-          document.querySelectorAll("#groups > section, #scorecards > section").forEach((s) => (s.style.display = ""));
+          document.querySelectorAll("#groups-web3 > section, #groups-tesla > section").forEach((s) => (s.style.display = ""));
           applyFilters();
           return;
         }
-        document.querySelectorAll("#groups > section").forEach((s) => {
+        showPage("web3");
+        document.querySelectorAll("#groups-web3 > section").forEach((s) => {
           s.style.display = s.id === `grp-${currentGroupKey}` ? "" : "none";
         });
-        document.querySelectorAll("#scorecards > section").forEach((s) => (s.style.display = "none"));
         const cur = document.getElementById(`grp-${currentGroupKey}`);
         if (cur) {
           cur.querySelectorAll("details").forEach((d) => (d.open = true));
-          cur.scrollIntoView({ behavior: "smooth", block: "start" });
+          requestAnimationFrame(() => cur.scrollIntoView({ behavior: "smooth", block: "start" }));
         }
       }
 
@@ -1109,12 +1109,12 @@
       });
 
       document.getElementById("expandBtn").addEventListener("click", () => {
-        document.querySelectorAll("#groups details").forEach((d) => {
+        document.querySelectorAll(`#page-${currentPage} details`).forEach((d) => {
           if (d.style.display !== "none") d.open = true;
         });
       });
       document.getElementById("collapseBtn").addEventListener("click", () => {
-        document.querySelectorAll("#groups details").forEach((d) => (d.open = false));
+        document.querySelectorAll(`#page-${currentPage} details`).forEach((d) => (d.open = false));
       });
 
       document.getElementById("focusBtn").addEventListener("click", () => {
@@ -1123,25 +1123,68 @@
       });
 
       document.getElementById("nextBtn").addEventListener("click", () => {
-        document.getElementById("search").value = "";
-        applyFilters();
         for (const g of plan.groups) {
           for (const it of g.items) {
             if (!itemTaskIds(g, it).every((id) => state[id])) {
-              const det = document.querySelector(`[data-item="${g.key}:${it.key}"]`);
-              if (det) {
-                det.style.display = "";
-                det.open = true;
-                det.scrollIntoView({ behavior: "smooth", block: "center" });
-                det.classList.add("flash-target");
-                setTimeout(() => det.classList.remove("flash-target"), 1500);
-              }
+              jumpToItem(g.key, it.key);
               return;
             }
           }
         }
         toast("Everything is complete. Incredible work.");
       });
+
+      // ---------- router / pages ----------
+      const PAGES = ["home", "web3", "tesla", "scorecards"];
+      const PAGE_LABEL = { home: "Home", web3: "Protocol Forge", tesla: "Tesla Data Eng", scorecards: "Scorecards" };
+      let currentPage = "home";
+      const pageOf = (gk) => (gk && gk.startsWith("pf-") ? "web3" : "tesla");
+
+      function buildPageTabs() {
+        const el = document.getElementById("pageTabs");
+        el.innerHTML = "";
+        PAGES.forEach((p) => {
+          const b = document.createElement("button");
+          b.dataset.page = p;
+          b.textContent = PAGE_LABEL[p];
+          b.className = "press shrink-0 rounded-full px-4 py-1.5 text-[14px] font-semibold tracking-[-0.224px] transition-colors text-ink hover:bg-white";
+          el.appendChild(b);
+        });
+      }
+
+      function showPage(p) {
+        if (!PAGES.includes(p)) p = "home";
+        currentPage = p;
+        PAGES.forEach((n) => {
+          const el = document.getElementById(`page-${n}`);
+          if (el) el.classList.toggle("hidden", n !== p);
+        });
+        document.querySelectorAll("[data-page]").forEach((b) => {
+          const active = b.dataset.page === p;
+          b.classList.toggle("bg-action", active);
+          b.classList.toggle("text-white", active);
+          b.classList.toggle("text-ink", !active);
+        });
+        const tb = document.getElementById("toolbar");
+        if (tb) tb.classList.toggle("hidden", !(p === "web3" || p === "tesla"));
+        // ensure revealed content shows even if it was hidden when observed
+        document.querySelectorAll(`#page-${p} .reveal`).forEach((el) => el.classList.add("visible"));
+        if (location.hash !== "#/" + p) history.replaceState(null, "", "#/" + p);
+        window.scrollTo({ top: 0, behavior: "auto" });
+      }
+
+      function routeFromHash() {
+        const m = (location.hash || "").match(/^#\/(\w+)/);
+        showPage(m ? m[1] : "home");
+      }
+
+      document.addEventListener("click", (e) => {
+        const b = e.target.closest("[data-page]");
+        if (!b) return;
+        e.preventDefault();
+        showPage(b.dataset.page);
+      });
+      window.addEventListener("hashchange", routeFromHash);
 
       // export / import
       document.getElementById("exportBtn").addEventListener("click", () => {
@@ -1210,6 +1253,8 @@
       );
 
       render();
+      buildPageTabs();
+      routeFromHash();
       initSync();
 
       // PWA service worker (only over http/https, not file://)
