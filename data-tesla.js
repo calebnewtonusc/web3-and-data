@@ -36,6 +36,10 @@ window.TESLA = {
       "Project defense question bank answered",
       "Resume bullets (metrics real)",
       "Recruiter message + LinkedIn project post",
+      "Published Tableau + Apache Superset dashboards",
+      "dbt project with tests, docs and lineage",
+      "PeoplePulse People-analytics case + one-page exec brief",
+      "Full-stack analytics app (Python + React) from scratch",
     ],
   },
 
@@ -987,6 +991,204 @@ window.TESLA = {
                 "Break it with one bad input",
                 "Fix it and understand the fix",
                 "If you can't answer the AI audit checklist, it is not interview-safe",
+              ],
+            },
+          ],
+        },
+      ],
+    },
+
+    // ============== ANALYTICS ENGINEERING & BUSINESS IMPACT ==============
+    {
+      key: "ae",
+      tag: "Analytics Track",
+      range: "Hedge: business analytics",
+      title: "Analytics Engineering & Business Impact",
+      summary:
+        "FleetPulse proves you can engineer pipelines. This proves you can drive business decisions — the other half Tesla wants, especially for People Systems & Analytics: BI tools (Tableau/Superset), dbt, statistics, a People-analytics case, and the framing + communication that turns analysis into adopted decisions.",
+      items: [
+        {
+          key: "bi",
+          eyebrow: "Required tooling",
+          title: "BI & Visualization — Tableau + Superset",
+          summary:
+            "The People Systems & Analytics JD names Tableau or Apache Superset explicitly. Streamlit is not enough.",
+          sections: [
+            {
+              label: "Learn",
+              tasks: [
+                "Tableau: worksheets, dashboards, calculated fields, LOD expressions, parameters",
+                "Apache Superset: datasets, charts, dashboards, SQL Lab",
+                "Chart selection: which chart answers which decision",
+                "Designing for non-technical executives",
+                "Data storytelling: lead with the 'so what'",
+              ],
+            },
+            {
+              label: "Do",
+              tasks: [
+                "Connect Tableau Public (or Superset) to FleetPulse gold tables",
+                "Build a fleet-health executive dashboard with filters + drilldowns",
+                "Rebuild the same dashboard in the other tool",
+                "Publish a Tableau Public link for the portfolio",
+              ],
+            },
+            {
+              label: "Interview defense",
+              tasks: [
+                "When to use Tableau vs Superset vs a coded dashboard",
+                "How you designed for a non-technical audience",
+                "Which chart you removed and why",
+                "How a viz could mislead and how you prevented it",
+              ],
+            },
+          ],
+        },
+        {
+          key: "dbt",
+          eyebrow: "Analytics engineering",
+          title: "Analytics Engineering with dbt",
+          summary:
+            "dbt is the industry standard for SQL-first ELT, tests, and docs — the analytics-engineering muscle this role rewards.",
+          sections: [
+            {
+              label: "Learn",
+              tasks: [
+                "ELT vs ETL revisited",
+                "dbt models, ref(), and sources",
+                "dbt tests: not_null, unique, relationships, accepted_values",
+                "Snapshots for slowly changing dimensions",
+                "dbt docs + lineage graph",
+                "A metrics / semantic layer",
+              ],
+            },
+            {
+              label: "Do",
+              tasks: [
+                "Convert FleetPulse silver/gold SQL into dbt models with ref()",
+                "Map your data-quality checks onto dbt tests",
+                "Generate dbt docs and the lineage graph",
+                "Define a few governed metrics in one place",
+              ],
+            },
+            {
+              label: "Interview defense",
+              tasks: [
+                "Why dbt instead of hand-written SQL scripts",
+                "How dbt tests catch bad data before dashboards",
+                "What lineage buys you when something breaks",
+                "How a metrics layer prevents definition drift",
+              ],
+            },
+          ],
+        },
+        {
+          key: "people",
+          eyebrow: "Domain project",
+          title: "PeoplePulse — People / Business Analytics",
+          summary:
+            "A People-analytics mini-project so you can credibly target People Systems & Analytics, not only Fleet Data. 'Knowledge of People data is a plus.'",
+          sections: [
+            {
+              label: "Learn",
+              tasks: [
+                "Core People metrics: headcount, attrition / retention, hiring funnel, time-to-fill",
+                "Compensation bands, engagement, and DEI metrics",
+                "Framing a business challenge before touching data",
+                "Privacy and sensitivity of people data",
+              ],
+            },
+            {
+              label: "Do",
+              tasks: [
+                "Generate synthetic HR data; ETL it with Python + SQL",
+                "Model headcount, attrition, and the hiring funnel",
+                "Build a Tableau/Superset dashboard for non-technical leaders",
+                "Write a one-page exec brief: problem, finding, recommendation",
+              ],
+            },
+            {
+              label: "Interview defense",
+              tasks: [
+                "What actually drives attrition in your data",
+                "Why a raw headcount number can mislead",
+                "What decision each chart supports",
+                "How you'd protect sensitive people data",
+              ],
+            },
+          ],
+        },
+        {
+          key: "methods",
+          eyebrow: "Rigor",
+          title: "Analytics Methods & Statistics",
+          summary:
+            "'Apply robust analytics methods to business situations' — the JD wants more than GROUP BY.",
+          sections: [
+            {
+              label: "Learn",
+              tasks: [
+                "Descriptive stats and distributions",
+                "Cohort and retention analysis",
+                "Correlation vs causation",
+                "Regression basics for explaining a metric",
+                "A/B testing and statistical significance",
+                "Forecasting basics and outlier handling",
+              ],
+            },
+            {
+              label: "Do",
+              tasks: [
+                "Run a cohort + retention analysis on a real dataset",
+                "Fit a simple regression to explain one business metric",
+                "Run an A/B-style comparison and judge significance",
+                "Document assumptions and what the analysis does not prove",
+              ],
+            },
+            {
+              label: "Interview defense",
+              tasks: [
+                "When a difference is signal vs noise",
+                "Why correlation is not causation here",
+                "What your regression can and cannot claim",
+                "How you chose the denominator and population",
+              ],
+            },
+          ],
+        },
+        {
+          key: "framing",
+          eyebrow: "The differentiator",
+          title: "Business Framing, Communication & Stakeholders",
+          summary:
+            "The JD leads with framing challenges, distilling for non-technical stakeholders, and driving adoption. This is what most engineers skip — and where you can win.",
+          sections: [
+            {
+              label: "Learn",
+              tasks: [
+                "Framing ambiguous problems in unstructured environments",
+                "Decision-first, 'so what' communication",
+                "Translating analysis for non-technical stakeholders",
+                "Driving adoption of an analytics solution",
+                "Lightweight project management for analytics work",
+              ],
+            },
+            {
+              label: "Do",
+              tasks: [
+                "Write a one-page exec brief: problem, approach, finding, recommendation, risk",
+                "Record a 5-minute non-technical walkthrough of one analysis",
+                "Draft a project plan / RACI for an analytics initiative",
+                "Prepare a stakeholder Q&A and objection-handling sheet",
+              ],
+            },
+            {
+              label: "Interview defense",
+              tasks: [
+                "How you framed an ambiguous problem from scratch",
+                "How you got a non-technical team to adopt your work",
+                "How you prioritized under ambiguity",
+                "How you measured the business impact",
               ],
             },
           ],
