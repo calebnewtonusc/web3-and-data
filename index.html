@@ -178,6 +178,9 @@
     <!-- Hero -->
     <header class="bg-parchment">
       <div class="max-w-[1440px] mx-auto px-6 py-16 md:py-[72px]">
+        <!-- Today focus -->
+        <div id="todayFocus" class="reveal mb-10"></div>
+
         <div class="max-w-[900px]">
           <div class="reveal flex flex-wrap items-center gap-2">
             <span class="inline-flex items-center gap-2 rounded-full border border-hairline bg-white px-4 py-1.5 text-[14px] tracking-[-0.224px] text-inkmuted80">
@@ -220,6 +223,9 @@
             </button>
             <button id="collapseBtn" class="press inline-flex items-center gap-1.5 rounded-full bg-white border border-hairline text-ink px-4 py-2 hover:border-action transition-colors">
               <i data-lucide="chevrons-up-down" class="w-4 h-4 text-action"></i> Collapse all
+            </button>
+            <button id="focusBtn" aria-pressed="false" class="press inline-flex items-center gap-1.5 rounded-full bg-white border border-hairline text-ink px-4 py-2 hover:border-action transition-colors">
+              <i data-lucide="crosshair" class="w-4 h-4 text-action"></i> Focus this week
             </button>
             <button id="exportBtn" class="press inline-flex items-center gap-1.5 rounded-full bg-white border border-hairline text-ink px-4 py-2 hover:border-action transition-colors">
               <i data-lucide="download" class="w-4 h-4 text-action"></i> Export
@@ -293,6 +299,9 @@
         </div>
       </div>
     </section>
+
+    <!-- How to use + setup -->
+    <div id="intro"></div>
 
     <main id="groups"></main>
     <div id="scorecards"></div>
@@ -434,6 +443,32 @@
           "I can derive protocol mechanisms, implement and attack them in Solidity, AND build a Tesla-grade data platform I can explain and defend without AI. Two domains, one discipline: real mastery under the scaffolding.",
         groups: [...pf.groups, ...te.groups],
         scorecards: [pf.scorecard, te.scorecard],
+        setup: [
+          "Install Foundry, Node 18+, Git, and VS Code",
+          "Create the GitHub repo and clone it locally",
+          "Set up a Python env (uv or venv) + Jupyter for the notebooks",
+          "Install a burner MetaMask wallet and get testnet ETH from a faucet",
+          "Get an Alchemy or Infura RPC key",
+          "Create a DataLemur account for daily SQL",
+          "Create a Tableau Public account; install dbt + DuckDB or Postgres locally",
+          "Bookmark Code4rena, Sherlock, CodeHawks, Immunefi for the monetize phase",
+        ],
+        guide: {
+          rhythm: [
+            "Each weekday, work one day-card top to bottom: Learn, then Do, then Artifact.",
+            "Morning (~90 min): read the source, derive the math by hand, work real examples.",
+            "Midday: build it — Python reference model first, then the Solidity (or the pipeline/query).",
+            "Afternoon: test it and attack it; write the day's notes; commit with a real message.",
+            "Friday: do not advance until you can honestly pass that week's quality gate.",
+          ],
+          pacing: [
+            "Protocol Forge is the main build: ~6-7 focused hours/day, Mon-Fri, June 1 to Aug 14.",
+            "In parallel, ~60-90 min/day on the Tesla SQL + DataLemur and interview track — side-learning, not a separate full day.",
+            "Build the big projects (FleetPulse, PeoplePulse, your dApp) on lighter days and weekends.",
+            "Tesla applications and the Web3 monetize steps come at the very end and into the fall.",
+            "When it feels like too much: ignore the wall, do today's card. The Today panel shows it.",
+          ],
+        },
       };
 
       const SECTION_ICON = {
@@ -655,6 +690,7 @@
                   <div class="flex items-center gap-3 mt-1">
                     <span class="text-[14px] font-semibold tracking-[-0.224px] ${dark ? "text-sky" : "text-action"}">${g.tag}</span>
                     <span class="text-[14px] tracking-[-0.224px] ${dark ? "text-white/50" : "text-inkmuted"} tabular-nums">${g.range || ""}</span>
+                    <span data-thisweek="${g.key}"></span>
                   </div>
                   <h2 class="mt-2 text-[28px] md:text-[34px] font-semibold leading-[1.1] tracking-[-0.374px] ${dark ? "text-white" : "text-ink"}">${g.title}</h2>
                   <p class="mt-3 text-[17px] leading-[1.47] tracking-[-0.374px] ${dark ? "text-white/70" : "text-inkmuted80"} max-w-[820px]">${g.summary || ""}</p>
@@ -720,9 +756,184 @@
 
         document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
         lucide.createIcons();
+        renderTodayFocus();
+        renderIntro();
         updateStreakUI();
         recompute();
         applyFilters();
+        if (focusMode) applyFocus();
+      }
+
+      // ---------- schedule / today / intro / focus ----------
+      const MONTHS = { January: 0, February: 1, March: 2, April: 3, May: 4, June: 5, July: 6, August: 7, Aug: 7, September: 8, Sept: 8, October: 9, November: 10, December: 11 };
+      const PLAN_YEAR = 2026;
+      let SCHED = [];
+      let currentGroupKey = null;
+      let focusMode = false;
+
+      function parseDayDate(eyebrow) {
+        const m = (eyebrow || "").match(/([A-Za-z]+)\s+(\d{1,2})/);
+        if (!m || MONTHS[m[1]] == null) return null;
+        return new Date(PLAN_YEAR, MONTHS[m[1]], parseInt(m[2], 10));
+      }
+      const ymd = (d) => d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate();
+      const fmtDate = (d) => d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+
+      function buildSchedule() {
+        const out = [];
+        plan.groups.forEach((g) => {
+          if (g.phase !== "Protocol Forge") return;
+          g.items.forEach((it) => {
+            const d = parseDayDate(it.eyebrow);
+            if (d) out.push({ date: d, gk: g.key, ik: it.key, weekTag: g.tag, title: it.title });
+          });
+        });
+        out.sort((a, b) => a.date - b.date);
+        out.forEach((e, i) => (e.idx = i + 1));
+        return out;
+      }
+
+      function jumpToItem(gk, ik) {
+        document.getElementById("search").value = "";
+        if (focusMode) { focusMode = false; applyFocus(); }
+        applyFilters();
+        const det = document.querySelector(`[data-item="${gk}:${ik}"]`);
+        if (det) {
+          det.style.display = "";
+          det.open = true;
+          det.scrollIntoView({ behavior: "smooth", block: "center" });
+          det.classList.add("flash-target");
+          setTimeout(() => det.classList.remove("flash-target"), 1500);
+        }
+      }
+
+      function renderTodayFocus() {
+        SCHED = buildSchedule();
+        const el = document.getElementById("todayFocus");
+        if (!SCHED.length) { el.innerHTML = ""; return; }
+        const today = new Date();
+        const T = ymd(today);
+        const first = SCHED[0], last = SCHED[SCHED.length - 1];
+        const cur = SCHED.find((e) => ymd(e.date) === T);
+        const next = SCHED.find((e) => ymd(e.date) >= T);
+        currentGroupKey = (cur || next || first).gk;
+
+        let eyebrow, title, sub, target;
+        if (T < ymd(first.date)) {
+          const days = Math.round((first.date - new Date(today.getFullYear(), today.getMonth(), today.getDate())) / 86400000);
+          eyebrow = `Starts in ${days} day${days === 1 ? "" : "s"}`;
+          title = `Day 1 — ${first.title}`;
+          sub = `${first.weekTag} · ${fmtDate(first.date)}`;
+          target = first;
+        } else if (cur) {
+          eyebrow = `Today · ${fmtDate(today)}`;
+          title = `${cur.weekTag}, Day ${cur.idx} of ${SCHED.length} — ${cur.title}`;
+          sub = "Your card for today. Open it and work it top to bottom.";
+          target = cur;
+        } else if (next) {
+          eyebrow = `Next up · ${fmtDate(next.date)}`;
+          title = `${next.weekTag} — ${next.title}`;
+          sub = "Rest day or weekend — this is the next card.";
+          target = next;
+        } else {
+          eyebrow = "Main build complete";
+          title = "Protocol Forge build phase is done";
+          sub = "Keep the Tesla track and the monetize steps moving.";
+          target = last;
+        }
+        const remaining = SCHED.filter((e) => ymd(e.date) >= T).length;
+
+        const pfGroups = plan.groups.filter((g) => g.phase === "Protocol Forge");
+        const dots = pfGroups
+          .map((g) => `<span id="wkdot-${g.key}" title="${g.tag}: ${g.title}" class="h-2 flex-1 min-w-[8px] rounded-full bg-dividersoft transition-colors ${g.key === currentGroupKey ? "ring-2 ring-action ring-offset-1 ring-offset-ink" : ""}"></span>`)
+          .join("");
+
+        el.innerHTML = `
+          <div class="bg-ink text-white rounded-applelg p-6 md:p-8">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              <div class="min-w-0">
+                <div class="text-[13px] tracking-[-0.224px] text-white/55 uppercase">${eyebrow}</div>
+                <div class="mt-1 text-[22px] md:text-[28px] font-semibold tracking-[-0.374px]">${title}</div>
+                <div class="mt-1 text-[15px] tracking-[-0.224px] text-white/70">${sub}</div>
+              </div>
+              <button id="todayJump" class="press shrink-0 inline-flex items-center gap-2 rounded-full bg-action text-white font-semibold px-5 py-2.5 hover:bg-actionfocus transition-colors">
+                <i data-lucide="play" class="w-4 h-4"></i> Go to this day
+              </button>
+            </div>
+            <div class="mt-6 flex items-center gap-3">
+              <span class="text-[12px] tracking-[-0.12px] text-white/55 tabular-nums shrink-0">${remaining} weekdays left</span>
+              <div class="flex-1 flex items-center gap-1">${dots}</div>
+            </div>
+          </div>`;
+        document.getElementById("todayJump").addEventListener("click", () => jumpToItem(target.gk, target.ik));
+
+        // "This week" badge on the current group header
+        document.querySelectorAll("[data-thisweek]").forEach((s) => (s.innerHTML = ""));
+        const badge = document.querySelector(`[data-thisweek="${currentGroupKey}"]`);
+        if (badge) {
+          badge.innerHTML = `<span class="inline-flex items-center gap-1 rounded-full bg-action/10 text-action border border-action/20 px-2.5 py-0.5 text-[12px] font-semibold"><i data-lucide="locate-fixed" class="w-3 h-3"></i> This week</span>`;
+        }
+        lucide.createIcons();
+      }
+
+      function renderIntro() {
+        const el = document.getElementById("intro");
+        const li = (t) => `<li class="flex gap-2 items-start"><i data-lucide="chevron-right" class="w-3.5 h-3.5 text-action mt-[3px] shrink-0"></i><span class="text-[15px] leading-[1.5] tracking-[-0.224px] text-inkmuted80">${t}</span></li>`;
+        const setupRows = plan.setup
+          .map((t, i) => {
+            const id = `setup:${i}`;
+            const on = !!state[id];
+            return `
+            <label class="flex items-start gap-3 py-1.5 cursor-pointer select-none">
+              <input type="checkbox" class="peer hidden task-cb" data-id="${id}" ${on ? "checked" : ""} />
+              <span class="mt-[2px] shrink-0 w-[20px] h-[20px] rounded-[6px] border border-hairline flex items-center justify-center transition-all duration-150 peer-checked:bg-action peer-checked:border-action"><i data-lucide="check" class="chk w-3.5 h-3.5 text-white ${on ? "" : "opacity-0"}"></i></span>
+              <span class="text-[15px] leading-[1.45] tracking-[-0.224px] peer-checked:line-through peer-checked:text-inkmuted text-inkmuted80">${t}</span>
+            </label>`;
+          })
+          .join("");
+        el.innerHTML = `
+          <section class="bg-parchment">
+            <div class="max-w-[1440px] mx-auto px-6 pb-14">
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="bg-white border border-hairline rounded-applelg p-6 md:p-8">
+                  <div class="flex items-center gap-2 mb-4"><i data-lucide="compass" class="w-5 h-5 text-action"></i><h3 class="text-[21px] font-semibold tracking-[-0.374px] text-ink">How to use this</h3></div>
+                  <div class="text-[12px] font-semibold uppercase tracking-[0.04em] text-inkmuted mb-2">Your daily rhythm</div>
+                  <ul class="space-y-1.5 mb-5">${plan.guide.rhythm.map(li).join("")}</ul>
+                  <div class="text-[12px] font-semibold uppercase tracking-[0.04em] text-inkmuted mb-2">Pacing the summer</div>
+                  <ul class="space-y-1.5">${plan.guide.pacing.map(li).join("")}</ul>
+                </div>
+                <div class="bg-white border border-hairline rounded-applelg p-6 md:p-8">
+                  <div class="flex items-center gap-2 mb-4"><i data-lucide="settings-2" class="w-5 h-5 text-action"></i><h3 class="text-[21px] font-semibold tracking-[-0.374px] text-ink">Before you start: setup</h3></div>
+                  <p class="text-[14px] leading-[1.45] text-inkmuted mb-3">Knock these out before Day 1 so nothing blocks you.</p>
+                  <div>${setupRows}</div>
+                </div>
+              </div>
+            </div>
+          </section>`;
+        lucide.createIcons();
+      }
+
+      function applyFocus() {
+        const btn = document.getElementById("focusBtn");
+        btn.setAttribute("aria-pressed", String(focusMode));
+        btn.classList.toggle("bg-action", focusMode);
+        btn.classList.toggle("text-white", focusMode);
+        btn.classList.toggle("bg-white", !focusMode);
+        btn.classList.toggle("text-ink", !focusMode);
+        if (!focusMode) {
+          document.querySelectorAll("#groups > section, #scorecards > section").forEach((s) => (s.style.display = ""));
+          applyFilters();
+          return;
+        }
+        document.querySelectorAll("#groups > section").forEach((s) => {
+          s.style.display = s.id === `grp-${currentGroupKey}` ? "" : "none";
+        });
+        document.querySelectorAll("#scorecards > section").forEach((s) => (s.style.display = "none"));
+        const cur = document.getElementById(`grp-${currentGroupKey}`);
+        if (cur) {
+          cur.querySelectorAll("details").forEach((d) => (d.open = true));
+          cur.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
       }
 
       function recompute() {
@@ -778,6 +989,12 @@
             chip.classList.toggle("bg-action", full);
             chip.classList.toggle("text-white", full);
             chip.classList.toggle("text-white/55", !full);
+          }
+          const wd = document.getElementById(`wkdot-${g.key}`);
+          if (wd) {
+            wd.classList.toggle("bg-action", gp === 100);
+            wd.classList.toggle("bg-action/40", gp > 0 && gp < 100);
+            wd.classList.toggle("bg-dividersoft", gp === 0);
           }
           if (g.phase) {
             const pt = (phaseTotals[g.phase] = phaseTotals[g.phase] || { d: 0, t: 0 });
@@ -898,6 +1115,11 @@
       });
       document.getElementById("collapseBtn").addEventListener("click", () => {
         document.querySelectorAll("#groups details").forEach((d) => (d.open = false));
+      });
+
+      document.getElementById("focusBtn").addEventListener("click", () => {
+        focusMode = !focusMode;
+        applyFocus();
       });
 
       document.getElementById("nextBtn").addEventListener("click", () => {
